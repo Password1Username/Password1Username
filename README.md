@@ -1,1 +1,1 @@
-# Project: Witchhunt - Dean Smith und Deniz Uersin
+# Project: Witchhunt - Dean Smith und Deniz Ueresin
