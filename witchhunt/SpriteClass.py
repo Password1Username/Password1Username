@@ -2,8 +2,86 @@ import pygame
 from pygame.locals import *
 import pyganim
 
-#class for all objects
-class MySprite:
+
+# '''Inputs: https://stackoverflow.com/questions/15652459/pygame-arrow-control'''
+#
+#
+class Input:
+    def __init__(self):
+        self.inputName = None
+        self.timeSinceInput = None
+
+
+class Inputs():
+
+    def __init__(self):
+        self.bindings = {"up": pygame.K_UP,
+                         "down":  pygame.K_DOWN,
+                         "left":  pygame.K_LEFT,
+                         "right":   pygame.K_RIGHT,
+                         "lp":  pygame.K_a,
+                         "mp":  pygame.K_s,
+                         "hp":  pygame.K_d,
+                         "lk":  pygame.K_z,
+                         "mk":  pygame.K_x,
+                         "hk":  pygame.K_c,
+                         "pause":   pygame.K_RETURN}
+
+        self.inputState = {"up": False,
+                       "down": False,
+                       "right": False,
+                       "left": False,
+                       "lp": False,
+                       "mp": False,
+                       "hp": False,
+                       "lk": False,
+                       "mk": False,
+                       "hk": False,
+                       "pause": False}
+
+    # self.buffer = InputBuffer()
+
+    def lookupBinding(self, keyEntered):
+        for binding, keyBound in self.bindings.items():
+            if keyEntered == keyBound:
+                return binding
+
+        return "not found"
+
+    # def getInputState(self,event):
+    #     if event.type == pygame.KEYDOWN:
+    #         binding = self.lookupBinding(event.key)
+    #         if binding != "not found":
+    #             # newInput = Input()
+    #             self.inputState[binding] = True
+    #     if event.type == pygame.KEYUP:
+    #         binding = self.lookupBinding(event.key)
+    #         if binding != "not found":
+    #             self.inputState[binding] = False
+
+    def getInputState(self, event):
+
+        if event.type == pygame.KEYDOWN:
+            binding = self.lookupBinding(event.key)
+            if binding != "not found":
+                newInput = Input()
+                newInput.inputName = binding
+                newInput.timeSinceInput = 0
+                # self.buffer.push(newInput)
+                self.inputState[binding] = True
+
+        if event.type == pygame.KEYUP:
+            binding = self.lookupBinding(event.key)
+            if binding != "not found":
+                self.inputState[binding] = False
+
+        return self.inputState
+
+
+'''Sprite Class'''
+
+
+class MySprite():
 
     #The constructor of class
     def __init__(self, imagePath, xpos = None, ypos=None):
@@ -26,8 +104,6 @@ class MySprite:
         self.dx_scaled = None
         self.dy_scaled = None
 
-
-
         self.width = None
         self.height = None
 
@@ -35,7 +111,6 @@ class MySprite:
         self.height_scaled = None
         self.image_obj = None
         self.image_rect = None
-
 
         '''Collision parameters'''
         self.collision_x1=None
@@ -52,15 +127,15 @@ class MySprite:
         self.collision_y2_scaled = None
         self.collision_width_scaled = None
         self.collision_height_scaled = None
-        #self.collision_rect = None
+        # self.collision_rect = None
 
-        #Load image object
+        # Load image object
         self.image_obj_original = pygame.image.load(imagePath)
         self.image_obj = pygame.image.load(imagePath)
-        #Set all image values 
+        # Set all image values
         self.getImageValues()
 
-    def readxy(self,valx,valy):
+    def setXY(self, valx, valy):
         self.x=valx
         if not self.x_scaled:
             self.x_scaled=valx
@@ -71,15 +146,14 @@ class MySprite:
 
         self.image_rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
-
     def getObj(self):
         return self.image_obj
-    
+
     def getWidth(self):
         return self.width
-    
+
     def getHight(self):
-        return self.height    
+        return self.height
 
     def getImageValues(self):
         self.image_rect = self.image_obj.get_rect()
@@ -98,9 +172,9 @@ class MySprite:
         self.collision_width = self.width
         self.collision_height = self.height
         self.collision_rect = pygame.Rect(self.collision_x1, self.collision_y1, self.collision_width, self.collision_height)
-        
-        #self.setCollisionPos(self.x, self.x+self.width, self.y, self.y+self.height)
-        
+
+        # self.setCollisionPos(self.x, self.x+self.width, self.y, self.y+self.height)
+
     def setCollisionPos(self, collX1, collX2, collY1, collY2):
         self.collision_x1 = collX1
         self.collision_x2 = collX2
@@ -140,22 +214,26 @@ class MySprite:
         self.collision_height_scaled = int(scaleh*self.collision_height)
         self.collision_rect = pygame.Rect(self.collision_x1_scaled,self.collision_y1_scaled,self.collision_width_scaled,self.collision_height_scaled)
 
-class MyPlayer:
+
+class MyPlayer(Inputs):
+
 
     def __init__(self, xpos=None, ypos=None):
-        self.Animation={}
-        self.Animation_scaled={}
-        self.Anim_scaled=None
-        
+        # super().__init__(self,xpos=None, ypos=None)
+        super().__init__()
+        self.Animation = {}
+        self.Animation_scaled = {}
+        self.Anim_scaled = None
+
         self.x = xpos
         self.x_scaled = xpos
-        #print "x_scaled: "+ str(self.x_scaled) 
+        # print "x_scaled: "+ str(self.x_scaled)
 
         self.y = ypos
         self.y_scaled = ypos
 
 
-        self.dx=0
+        self.dx = 0
         self.dx_scaled=0
         self.incr_x=0.0
         self.incr_y=0.0
@@ -184,24 +262,28 @@ class MyPlayer:
         self.collision_y2_scaled = None
         self.collision_width_scaled = None
         self.collision_height_scaled = None
-        #self.collision_rect = None
+        # self.collision_rect = None
 
         self.scalew=1.0
         self.scaleh=1.0
 
-    def feedAnimation(self,spritesheet,frames,name):
-        #print frames
+
+
+
+
+    def setAnimation(self, spritesheet, frames, name):
+        # print frames
         if not self.x:
             self.x=frames[0][2]
             self.x_scaled=frames[0][2]
-        
+
         if not self.width:
             self.width=frames[0][2]
             self.width_scaled=frames[0][2]
             self.collision_x1 = self.x
             self.collision_x2 = self.x+self.width
             self.collision_width = self.width
-        
+
         if not self.y:
             self.y=frames[0][3]
             self.y_scaled=frames[0][3]
@@ -225,9 +307,8 @@ class MyPlayer:
             else:
                 self.Anim_scaled=self.Animation_scaled[name]
 
-    def initAnimation(self,name):
+    def setInitAnimation(self, name):
         self.Anim_scaled=self.Animation_scaled[name]
-
 
     def setCollisionPos(self, collX1, collX2, collY1, collY2):
         self.collision_x1 = collX1
@@ -238,7 +319,7 @@ class MyPlayer:
         self.collsion_height = self.collision_y2 - self.collision_y1
         self.collsion_rect   = pygame.Rect(self.collision_x1,self.collision_y1,self.collision_width,self.collision_height)
 
-    def collision_with(self, sprite):
+    def getCollision(self, sprite):
 
         if self.collision_rect.colliderect(sprite.collision_rect):
             #print(sprite.collision_rect)
@@ -250,24 +331,24 @@ class MyPlayer:
             print("No collision detected")
         return self.collision_rect.colliderect(sprite.image_rect)
 
-    def readxy(self,valx,valy):
+    def setXY(self, valx, valy):
         self.x=valx
         if not self.x_scaled:
             self.x_scaled=self.x
-        
+
         self.y=valy
         if not self.y_scaled:
             self.y_scaled=self.y
 
-
-    def readdxdy(self, valdx, valdy):
+    def setdxdy(self, valdx, valdy):
         self.dx=valdx
         if not self.dx_scaled:
             self.dx_scaled=valdx
         self.dy=valdy
         if not self.dy_scaled:
             self.dy_scaled=valdy
-    def readScale(self,scalew,scaleh):
+
+    def setScale(self, scalew, scaleh):
         self.scalew=scalew
         self.scaleh=scaleh
 
@@ -284,14 +365,14 @@ class MyPlayer:
         #self.inv_scalew=1.0/scalew
         #self.inv_scaleh=1.0/scaleh
         #print self.x_scaled , self.y_scaled
-        for key in self.Animation_scaled.keys():    
+        for key in self.Animation_scaled.keys():
             '''Warning, getCopy is necessary to avoid issues with memory address storage of transformations'''
-            '''https://github.com/asweigart/pyganim/blob/master/examples/simulation_time_demo.py''' 
+            '''https://github.com/asweigart/pyganim/blob/master/examples/simulation_time_demo.py'''
             self.Animation_scaled[key]=self.Animation[key].getCopy()
             self.Animation_scaled[key].smoothscale((self.width_scaled, self.height_scaled))
             self.Animation_scaled[key].makeTransformsPermanent()
             #.smoothscale((self.width_scaled, self.height_scaled))
-            
+
             self.Anim_scaled=self.Anim.getCopy()
             self.Anim_scaled.smoothscale((self.width_scaled, self.height_scaled))
             self.Anim_scaled.makeTransformsPermanent()
@@ -316,13 +397,19 @@ class MyPlayer:
         self.collision_height_scaled = int(round(self.scaleh*self.collision_height))
         self.collision_rect = pygame.Rect(self.collision_x1_scaled,self.collision_y1_scaled,self.collision_width_scaled,self.collision_height_scaled)
         #print str(self.x_scaled) + "!" +str(self.y_scaled)
+    # def move(self,event,surface):
 
+    #     pass
     def move(self, event, surface):
         #dx = 0.0
         #dy = 0.0
         #dx = 0.0
         #dy = 0.0
         #dscale = 1.0
+
+        inputState = super().getInputState(event)
+
+        print(inputState)
 
         if event.type == pygame.KEYDOWN:
 
@@ -333,12 +420,15 @@ class MyPlayer:
                 self.Anim_scaled.play()  # there is also a pause() and stop() method
                 self.incr_y = -self.dy  # winy*ratey
 
-            elif event.key == pygame.K_DOWN:
+            if event.key == pygame.K_DOWN:
                 # if self.Anim_scaled == self.Animation_scaled["up"] :
                 # self.Anim_scaled.pause()
                 self.Anim_scaled = self.Animation_scaled["down"]
                 self.Anim_scaled.play()  # there is also a pause() and stop() method
-                self.incr_y  = self.dy
+                self.incr_y = self.dy
+                # if self.incr_y == 0:
+                #     self.incr_y  = self.dy
+                # elif self.in
 
             if event.key == pygame.K_RIGHT:
                 # if self.Anim_scaled == self.Animation_scaled["left"]:
@@ -347,13 +437,12 @@ class MyPlayer:
                 self.Anim_scaled.play()  # there is also a pause() and stop() method
                 self.incr_x = self.dx
 
-            elif event.key == pygame.K_LEFT:
+            if event.key == pygame.K_LEFT:
                 # if self.Anim_scaled == self.Animation_scaled["right"]:
                 # self.Anim_scaled.pause()
                 self.Anim_scaled = self.Animation_scaled["left"]
                 self.Anim_scaled.play()  # there is also a pause() and stop() method
                 self.incr_x = -self.dx
-
 
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_UP:
@@ -370,7 +459,6 @@ class MyPlayer:
                 self.incr_x = 0.0
                 if self.incr_y  == 0.0:
                     self.Anim_scaled.pause()
-
 
             elif event.key == pygame.K_LEFT:
                 self.incr_x = 0.0
@@ -457,7 +545,7 @@ class MyPlayer:
 #         self.scalew = 1.0
 #         self.scaleh = 1.0
 #
-#     def feedAnimation(self, spritesheet, frames, name):
+#     def setAnimation(self, spritesheet, frames, name):
 #         # print frames
 #         if not self.x:
 #             self.x = frames[0][2]
@@ -493,7 +581,7 @@ class MyPlayer:
 #             else:
 #                 self.Anim_scaled = self.Animation_scaled[name]
 #
-#     def initAnimation(self, name):
+#     def setInitAnimation(self, name):
 #         self.Anim_scaled = self.Animation_scaled[name]
 #
 #     def setCollisionPos(self, collX1, collX2, collY1, collY2):
@@ -506,7 +594,7 @@ class MyPlayer:
 #         self.collsion_rect = pygame.Rect(self.collision_x1, self.collision_y1, self.collision_width,
 #                                          self.collision_height)
 #
-#     def collision_with(self, sprite):
+#     def getCollision(self, sprite):
 #
 #         if self.collision_rect.colliderect(sprite.collision_rect):
 #             # print(sprite.collision_rect)
@@ -518,7 +606,7 @@ class MyPlayer:
 #             print("No collision detected")
 #         return self.collision_rect.colliderect(sprite.image_rect)
 #
-#     def readxy(self, valx, valy):
+#     def setXY(self, valx, valy):
 #         self.x = valx
 #         if not self.x_scaled:
 #             self.x_scaled = self.x
@@ -527,7 +615,7 @@ class MyPlayer:
 #         if not self.y_scaled:
 #             self.y_scaled = self.y
 #
-#     def readdxdy(self, valdx, valdy):
+#     def setdxdy(self, valdx, valdy):
 #         self.dx = valdx
 #         if not self.dx_scaled:
 #             self.dx_scaled = valdx
@@ -535,7 +623,7 @@ class MyPlayer:
 #         if not self.dy_scaled:
 #             self.dy_scaled = valdy
 #
-#     def readScale(self, scalew, scaleh):
+#     def setScale(self, scalew, scaleh):
 #         self.scalew = scalew
 #         self.scaleh = scaleh
 #

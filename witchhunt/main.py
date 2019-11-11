@@ -9,7 +9,7 @@ import pygame
 from pygame.locals import *
 import pyganim
 import math as m
-from SpriteClass import MySprite, MyPlayer
+from SpriteClass import  MySprite, MyPlayer
 
 
 pygame.init()
@@ -96,13 +96,13 @@ rects_right= [(  spritex+   3*spritewidth , spritey+spriteheight , spritewidth,s
 # playerAnim_scaled = playerAnim_down
 
 player = MyPlayer(xpos=0.0,ypos=0.0)
-player.feedAnimation('./pics/blueboy_64_40.png' , rects_down , "down")
-player.feedAnimation('./pics/blueboy_64_40.png' , rects_up , "up")
-player.feedAnimation('./pics/blueboy_64_40.png' , rects_left ,"left")
-player.feedAnimation('./pics/blueboy_64_40.png', rects_right ,"right")
-player.initAnimation("down")
-player.readxy(0.0,0.0)
-player.readdxdy(dx,dy)
+player.setAnimation('./pics/blueboy_64_40.png', rects_down, "down")
+player.setAnimation('./pics/blueboy_64_40.png', rects_up, "up")
+player.setAnimation('./pics/blueboy_64_40.png', rects_left, "left")
+player.setAnimation('./pics/blueboy_64_40.png', rects_right, "right")
+player.setInitAnimation("down")
+player.setXY(0.0, 0.0)
+player.setdxdy(dx, dy)
 
 
 danny = MyPlayer(xpos=0,ypos=0)
@@ -112,10 +112,10 @@ rects_down_danny = [(  spritex , spritey , spritewidth,spriteheight),
               (  spritex+   2*spritewidth , spritey , spritewidth,spriteheight),
             (  spritex+   3*spritewidth , spritey , spritewidth,spriteheight)]
 
-danny.feedAnimation('./pics/people/danny_64_40.png', rects_down_danny, "down")
-danny.initAnimation("down")
-danny.readxy(0.0,0.0)
-#player.readdxdy(dx,dy)
+danny.setAnimation('./pics/people/danny_64_40.png', rects_down_danny, "down")
+danny.setInitAnimation("down")
+danny.setXY(0.0, 0.0)
+#player.setdxdy(dx,dy)
 
 
 """Used to scale objects."""
@@ -191,9 +191,9 @@ for row in range(0, nheight):
     for column in range(0, nwidth):
         # print str(row)+","+str(column)
         # print(tilemap[row][column])
-        # print(block_obj.collision_with(house_obj))
+        # print(block_obj.getCollision(house_obj))
 
-        textures[tilemap[row][column]].readxy(round(column * tilewidth_scaled), round(row * tileheight_scaled))
+        textures[tilemap[row][column]].setXY(round(column * tilewidth_scaled), round(row * tileheight_scaled))
 
 
 
@@ -229,7 +229,7 @@ while True:
             #textures={key: pygame.transform.scale(textures[key] , (int(tilewidth_scaled),int(tileheight_scaled))) for (key,textures[key]) in textures.items()}
             for row in range(0, nheight):
                 for column in range(0, nwidth):
-                    textures[tilemap[row][column]].readxy(column * tilewidth_scaled,row * tileheight_scaled)
+                    textures[tilemap[row][column]].setXY(column * tilewidth_scaled, row * tileheight_scaled)
                     textures[tilemap[row][column]].scaleValues(scalew,scaleh)
                     #print(textures[tilemap[row][column]].image_rect)
             #xpos_scaled=scaled_variable(xpos,scalew)
@@ -239,11 +239,11 @@ while True:
             house_scaled.scaleValues(scalew,scaleh)
 
             #print player.Animation_scaled
-            player.readScale(scalew,scaleh)
+            player.setScale(scalew, scaleh)
             player.scaleValues()
-            player.move(event, windowSurface)
+            #player.move(event, windowSurface)
 
-            danny.readScale(scalew, scaleh)
+            danny.setScale(scalew, scaleh)
             danny.scaleValues()
             #danny.playAnim"down"]
             #danny.move(event, windowSurface)
@@ -253,8 +253,8 @@ while True:
         for column in range(0,nwidth):
             #print str(row)+","+str(column)
             #print(tilemap[row][column])
-            #print(block_obj.collision_with(house_obj))
-            textures[tilemap[row][column]].readxy(round(column * tilewidth_scaled), round(row * tileheight_scaled))
+            #print(block_obj.getCollision(house_obj))
+            textures[tilemap[row][column]].setXY(round(column * tilewidth_scaled), round(row * tileheight_scaled))
             #textures[tilemap[row][column]].image_rect=(round(column * tilewidth_scaled), round(row * tileheight_scaled), m.ceil(tilewidth_scaled),m.ceil(tileheight_scaled))
             #print(textures[tilemap[row][column]].image_rect)
             windowSurface.blit(textures[tilemap[row][column]].image_obj,textures[tilemap[row][column]].image_rect)
@@ -267,6 +267,8 @@ while True:
     danny.playAnim(windowSurface, "down")
     #print(danny.x_scaled,danny.y_scaled)
     player.move(event, windowSurface)
+    #player.getInputState(event)
+
     #print(player.x_scaled, player.y_scaled)
 
     #print(danny.x_scaled)
