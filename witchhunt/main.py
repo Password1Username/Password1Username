@@ -130,13 +130,13 @@ def scaled_anim_object(ref_object,image_w,image_h,scale_w,scale_h):
 
 mainClock = pygame.time.Clock()
 '''Music'''
-#pygame.mixer.music.load('./music/witch-hunt.wav')
-pygame.mixer.music.load('./music/intro.wav')
-pygame.mixer.music.play(0)
+pygame.mixer.music.load('./music/witch-hunt.wav')
+# pygame.mixer.music.load('./music/intro.wav')
+pygame.mixer.music.play(-1)
 
 FPS=30
 
-#pygame.key.set_repeat(100,1000)
+# pygame.key.set_repeat(100,1000)
 house_scaled=house_obj
 
 
