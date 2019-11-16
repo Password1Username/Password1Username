@@ -408,82 +408,89 @@ class MyPlayer(Inputs):
         #dscale = 1.0
 
         inputState = super().getInputState(event)
+        # print(inputState)
 
-        print(inputState)
+        if inputState['up']:
 
-        if event.type == pygame.KEYDOWN:
+            if inputState['down']:
+                if self.Anim_scaled != self.Animation_scaled['down']:
+                    self.Anim_scaled = self.Animation_scaled['up']
+                self.incr_x = 0.0
+                self.incr_y = 0.0
 
-            if event.key == pygame.K_UP:
-                # if self.Anim_scaled == self.Animation_scaled["down"]:
-                # self.Anim_scaled.pause()
-                self.Anim_scaled = self.Animation_scaled["up"]
-                self.Anim_scaled.play()  # there is also a pause() and stop() method
-                self.incr_y = -self.dy  # winy*ratey
+            elif inputState['right']:
+                if self.Anim_scaled != self.Animation_scaled['right']:
+                    self.Anim_scaled = self.Animation_scaled['up']
+                self.incr_x = 0.71*self.dx
+                self.incr_y = -0.71*self.dy
 
-            if event.key == pygame.K_DOWN:
-                # if self.Anim_scaled == self.Animation_scaled["up"] :
-                # self.Anim_scaled.pause()
-                self.Anim_scaled = self.Animation_scaled["down"]
-                self.Anim_scaled.play()  # there is also a pause() and stop() method
+            elif inputState['left']:
+                if self.Anim_scaled != self.Animation_scaled['left']:
+                    self.Anim_scaled = self.Animation_scaled['up']
+                self.incr_x = -0.71 * self.dx
+                self.incr_y = -0.71 * self.dy
+
+            else:
+                self.Anim_scaled = self.Animation_scaled['up']
+                self.incr_x = 0.0
+                self.incr_y = -self.dy
+            self.Anim_scaled.play()
+
+        elif inputState['down']:
+
+
+            # if inputState['up']:
+            #     self.incr_x = 0.0
+            #     self.incr_y = 0.0
+
+            if inputState['right']:
+                self.incr_x = 0.71 * self.dx
+                self.incr_y = 0.71 * self.dy
+
+            elif inputState['left']:
+                self.incr_x = -0.71 * self.dx
+                self.incr_y = 0.71 * self.dy
+
+            else:
+                self.Anim_scaled = self.Animation_scaled['down']
+                self.incr_x = 0.0
                 self.incr_y = self.dy
-                # if self.incr_y == 0:
-                #     self.incr_y  = self.dy
-                # elif self.in
+            self.Anim_scaled.play()
 
-            if event.key == pygame.K_RIGHT:
-                # if self.Anim_scaled == self.Animation_scaled["left"]:
-                # self.Anim_scaled.pause()
-                self.Anim_scaled = self.Animation_scaled["right"]
-                self.Anim_scaled.play()  # there is also a pause() and stop() method
+        elif inputState['right']:
+            if inputState['left']:
+                # print(inputState)
+                if self.Anim_scaled != self.Animation_scaled['left']:
+                    self.Anim_scaled = self.Animation_scaled['right']
+                self.incr_x = 0.0
+                self.incr_y = 0.0
+            else:
+                self.Anim_scaled = self.Animation_scaled['right']
                 self.incr_x = self.dx
-
-            if event.key == pygame.K_LEFT:
-                # if self.Anim_scaled == self.Animation_scaled["right"]:
-                # self.Anim_scaled.pause()
-                self.Anim_scaled = self.Animation_scaled["left"]
-                self.Anim_scaled.play()  # there is also a pause() and stop() method
-                self.incr_x = -self.dx
-
-        elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_UP:
                 self.incr_y = 0.0
-                if self.incr_x == 0.0:
-                    self.Anim_scaled.pause()  # there is also a pause() and stop() method
+            self.Anim_scaled.play()
 
-            elif event.key == pygame.K_DOWN:
-                self.incr_y = 0.0
-                if self.incr_x == 0.0:  # there is also a pause() and stop() method
-                    self.Anim_scaled.pause()
+        elif inputState['left']:
+            # if inputState['right']:
+            #     if not self.Animation_scaled['right']:
+            #         self.Anim_scaled = self.Animation_scaled['left']
+            #     self.incr_x = 0.0
 
-            if event.key == pygame.K_RIGHT:
-                self.incr_x = 0.0
-                if self.incr_y  == 0.0:
-                    self.Anim_scaled.pause()
-
-            elif event.key == pygame.K_LEFT:
-                self.incr_x = 0.0
-                if self.incr_y == 0.0:
-                    self.Anim_scaled.pause()
-
+            self.Anim_scaled = self.Animation_scaled['left']
+            self.incr_x = -self.dx
+            self.incr_y = 0.0
+            self.Anim_scaled.play()
         else:
-            self.Anim_scaled.pause() # there is also a pause() and stop() method
             self.incr_x = 0.0
             self.incr_y = 0.0
-
-
-        ''' Normed diagonal speed '''
-
-        if self.incr_x != 0.0 and self.incr_y  != 0.0:
-            self.dscale = 0.71
-        else:
-            self.dscale = 1.0
-        # print (dscale)
+            self.Anim_scaled.pause()
 
         self.x = round(self.x + self.dscale * self.incr_x)
         self.y = round(self.y + self.dscale * self.incr_y )
         self.x_scaled = self.x*self.scalew
         self.y_scaled = self.y*self.scaleh
         self.Anim_scaled.blit(surface, (self.x_scaled, self.y_scaled))
+
 
     def playAnim(self,surface,name):
         #self.Animation_scaled[name].play()#.blit(surface, (self.x_scaled, self.y_scaled))
