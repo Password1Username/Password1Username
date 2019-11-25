@@ -103,9 +103,9 @@ def scaled_anim_object(ref_object,image_w,image_h,scale_w,scale_h):
 
 mainClock = pygame.time.Clock()
 '''Music'''
-#pygame.mixer.music.load('./music/witch-hunt.wav')
-#pygame.mixer.music.load('./music/intro.wav')
-#pygame.mixer.music.play(-1)
+pygame.mixer.music.load('./music/witch-hunt.wav')
+# pygame.mixer.music.load('./music/intro.wav')
+pygame.mixer.music.play(-1)
 
 FPS=30
 
