@@ -54,7 +54,7 @@ housey=50
 
 windowSurface = pygame.display.set_mode((winx,winy), HWSURFACE|DOUBLEBUF|RESIZABLE, 32)
 pygame.display.set_caption('Witch Hunt')
-
+#
 #create dummy house object
 #house = pygame.image.load('./pics/buildings/haus1.png')
 
