@@ -71,10 +71,10 @@ spriteheight = 40
 # playerAnim_scaled = playerAnim_down
 
 player =  MyPlayer(xpos=0.0,ypos=0.0)
-player.setAnimation('./pics/blueboy_64_40.png', "down")
-player.setAnimation('./pics/blueboy_64_40.png', "up")
-player.setAnimation('./pics/blueboy_64_40.png', "left")
-player.setAnimation('./pics/blueboy_64_40.png', "right")
+player.setAnimation('./pics/blueboy_64_40.png', rects_down, "down")
+player.setAnimation('./pics/blueboy_64_40.png', rects_up, "up")
+player.setAnimation('./pics/blueboy_64_40.png', rects_left, "left")
+player.setAnimation('./pics/blueboy_64_40.png', rects_right, "right")
 player.setInitAnimation("down")
 player.setXY(0.0, 0.0)
 player.setdxdy(dx, dy)
