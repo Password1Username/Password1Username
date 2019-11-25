@@ -51,21 +51,21 @@ spritex=0
 spritewidth = 64
 spriteheight = 40
 
-# rects_up   = [(  spritex+   3*spritewidth , spritey , spritewidth,spriteheight),
-#               (  spritex+   4*spritewidth , spritey , spritewidth,spriteheight),
-#               (  spritex+   5*spritewidth , spritey , spritewidth,spriteheight)]
-#
-# rects_down = [(  spritex                  , spritey , spritewidth,spriteheight),
-#               (  spritex+     spritewidth , spritey , spritewidth,spriteheight),
-#               (  spritex+   2*spritewidth , spritey , spritewidth,spriteheight)]
-#
-# rects_left = [(  spritex                  , spritey+spriteheight , spritewidth,spriteheight),
-#               (  spritex+     spritewidth , spritey+spriteheight , spritewidth,spriteheight),
-#               (  spritex+   2*spritewidth , spritey+spriteheight , spritewidth,spriteheight)]
-#
-# rects_right= [(  spritex+   3*spritewidth , spritey+spriteheight , spritewidth,spriteheight),
-#               (  spritex+   4*spritewidth , spritey+spriteheight , spritewidth,spriteheight),
-#               (  spritex+   5*spritewidth , spritey+spriteheight , spritewidth,spriteheight)]
+rects_up   = [(  spritex+   3*spritewidth , spritey , spritewidth,spriteheight),
+              (  spritex+   4*spritewidth , spritey , spritewidth,spriteheight),
+              (  spritex+   5*spritewidth , spritey , spritewidth,spriteheight)]
+
+rects_down = [(  spritex                  , spritey , spritewidth,spriteheight),
+              (  spritex+     spritewidth , spritey , spritewidth,spriteheight),
+              (  spritex+   2*spritewidth , spritey , spritewidth,spriteheight)]
+
+rects_left = [(  spritex                  , spritey+spriteheight , spritewidth,spriteheight),
+              (  spritex+     spritewidth , spritey+spriteheight , spritewidth,spriteheight),
+              (  spritex+   2*spritewidth , spritey+spriteheight , spritewidth,spriteheight)]
+
+rects_right= [(  spritex+   3*spritewidth , spritey+spriteheight , spritewidth,spriteheight),
+              (  spritex+   4*spritewidth , spritey+spriteheight , spritewidth,spriteheight),
+              (  spritex+   5*spritewidth , spritey+spriteheight , spritewidth,spriteheight)]
 
 
 # playerAnim_scaled = playerAnim_down
