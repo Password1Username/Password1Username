@@ -127,7 +127,7 @@ def scaled_anim_object(ref_object,image_w,image_h,scale_w,scale_h):
     scaled_object.smoothscale((round(scale_w*image_w),round(scale_h*image_h)))
     return scaled_object
 
-
+#
 mainClock = pygame.time.Clock()
 '''Music'''
 pygame.mixer.music.load('./music/witch-hunt.wav')
