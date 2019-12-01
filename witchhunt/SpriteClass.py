@@ -372,7 +372,7 @@ class MyPlayer(Inputs):
                 self.Anim_scaled=self.Animation_scaled[name]
 
     def setInitAnimation(self, name):
-        self.Anim_scaled=self.Animation_scaled[name]
+        self.Anim_scaled = self.Animation_scaled[name]
 
     def setCollisionPos(self, collx1, collx2, colly1, colly2):
 
