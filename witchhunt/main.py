@@ -88,11 +88,6 @@ rects_right= [(  spritex+   3*spritewidth , spritey+spriteheight , spritewidth,s
               (  spritex+   5*spritewidth , spritey+spriteheight , spritewidth,spriteheight)]   
 
 
-
-
-
-
-
 # playerAnim_scaled = playerAnim_down
 
 player = MyPlayer(xpos=0.0,ypos=0.0)
@@ -101,7 +96,8 @@ player.setAnimation('./pics/blueboy_64_40.png', rects_up, "up")
 player.setAnimation('./pics/blueboy_64_40.png', rects_left, "left")
 player.setAnimation('./pics/blueboy_64_40.png', rects_right, "right")
 player.setInitAnimation("down")
-player.setXY(0.0, 0.0)
+player.setXY(12.0, 12.0)
+# print(player.x_scaled, player.y_scaled)
 player.setdxdy(dx, dy)
 
 
@@ -114,8 +110,9 @@ rects_down_danny = [(  spritex , spritey , spritewidth,spriteheight),
 
 danny.setAnimation('./pics/people/danny_64_40.png', rects_down_danny, "down")
 danny.setInitAnimation("down")
-danny.setXY(0.0, 0.0)
-#player.setdxdy(dx,dy)
+danny.setXY(0.0, 100.0)
+# print(danny.x_scaled, danny.y_scaled)
+# player.setdxdy(dx,dy)
 
 
 """Used to scale objects."""
@@ -218,35 +215,31 @@ while True:
             tempSurface = pygame.display.set_mode((event.w, event.h),HWSURFACE|DOUBLEBUF|RESIZABLE)
             windowSurface.blit(tempSurface, (0,0))
             windowSurface = tempSurface
-            winx=windowSurface.get_width()
-            winy=windowSurface.get_height()
+            winx = windowSurface.get_width()
+            winy = windowSurface.get_height()
             del tempSurface
-            scalew=float(winx)/smallwinx
-            scaleh=float(winy)/smallwiny
-            tilewidth_scaled=round(scaled_variable(tilewidth,scalew))
-            tileheight_scaled=round(scaled_variable(tileheight,scaleh))
-            #textures[tilemap[row][column]].image_rect
-            #textures={key: pygame.transform.scale(textures[key] , (int(tilewidth_scaled),int(tileheight_scaled))) for (key,textures[key]) in textures.items()}
+            scalew = float(winx)/smallwinx
+            scaleh = float(winy)/smallwiny
+            tilewidth_scaled = round(scaled_variable(tilewidth,scalew))
+            tileheight_scaled = round(scaled_variable(tileheight,scaleh))
+
             for row in range(0, nheight):
                 for column in range(0, nwidth):
                     textures[tilemap[row][column]].setXY(column * tilewidth_scaled, row * tileheight_scaled)
-                    textures[tilemap[row][column]].scaleValues(scalew,scaleh)
+                    textures[tilemap[row][column]].scaleValues(scalew, scaleh)
                     #print(textures[tilemap[row][column]].image_rect)
-            #xpos_scaled=scaled_variable(xpos,scalew)
-            #ypos_scaled=scaled_variable(ypos,scaleh)
 
-            house_scaled=house_obj
-            house_scaled.scaleValues(scalew,scaleh)
+            house_scaled = house_obj
+            house_scaled.scaleValues(scalew, scaleh)
 
-            #print player.Animation_scaled
+            # print player.Animation_scaled
+            # print(scalew,scaleh)
             player.setScale(scalew, scaleh)
-            player.scaleValues()
-            #player.move(event, windowSurface)
 
             danny.setScale(scalew, scaleh)
-            danny.scaleValues()
-            #danny.playAnim"down"]
-            #danny.move(event, windowSurface)
+            # danny.scaleValues()
+            # danny.playAnim"down"]
+            # danny.move(event, windowSurface)
 
     '''Inter'''
     for row in range(0,nheight):
@@ -260,22 +253,11 @@ while True:
             windowSurface.blit(textures[tilemap[row][column]].image_obj,textures[tilemap[row][column]].image_rect)
 
 
-    # print(event)
-    #print player.x_scaled, player.y_scaled
-    #windowSurface.blit(house_scaled.image_obj, (house_scaled.x_scaled,house_scaled.y_scaled)) #display house on
-    #player.Anim_scaled.blit(windowSurface, (player.x_scaled,player.y_scaled))
     danny.playAnim(windowSurface, "down")
-    #print(danny.x_scaled,danny.y_scaled)
+
     player.move(event, windowSurface)
-    #player.getInputState(event)
+    # print(player.x_scaled, player.y_scaled)
 
-    #print(player.x_scaled, player.y_scaled)
-
-    #print(danny.x_scaled)
-    #danny.move(event,windowSurface)
-    #player.Anim_scaled.blit(windowSurface, (player.x_scaled, player.y_scaled))
     pygame.display.update()
     mainClock.tick(FPS) 
-
-
 
