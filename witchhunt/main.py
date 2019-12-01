@@ -10,6 +10,8 @@ from pygame.locals import *
 import pyganim
 import math as m
 from SpriteClass import  MySprite, MyPlayer
+from tilemap import materials, Tilemap
+
 
 
 pygame.init()
@@ -167,10 +169,17 @@ textures={
         block: block_obj
         }
 
+block_textures={
+    stone: stone_obj,
+    water: water_obj,
+    hedge: hedge_obj,
+    block: block_obj}
+
+
 tilemap=[[grass,grass,grass,grass,grass,grass,block,dirt ,block,grass,grass,grass,grass,grass,grass,grass],
          [grass,grass,grass,grass,grass,grass,grass,dirt ,grass,grass,grass,grass,grass,grass,grass,grass],
          [grass,grass,grass,grass,grass,grass,grass,dirt ,hedge,grass,grass,grass,grass,grass,grass,grass],
-         [grass,grass,grass,grass,grass,grass,hedge,dirt ,grass,grass,grass,grass,grass,grass,grass,grass], 
+         [grass,grass,grass,grass,grass,grass,hedge,dirt ,grass,grass,grass,grass,grass,grass,grass,grass],
          [grass,grass,grass,grass,grass,grass,grass,dirt ,grass,grass,grass,grass,grass,grass,grass,grass],
          [grass,grass,grass,grass,grass,grass,grass,dirt ,grass,grass,grass,grass,grass,grass,grass,grass],
          [grass,grass,grass,grass,grass,grass,grass,dirt ,hedge,grass,grass,grass,grass,grass,grass,grass],
@@ -184,6 +193,9 @@ tilemap=[[grass,grass,grass,grass,grass,grass,block,dirt ,block,grass,grass,gras
          [grass,grass,grass,grass,grass,hedge,water,water,water,hedge,grass,grass,grass,grass,grass,grass],
          [grass,grass,grass,grass,grass,hedge,hedge,hedge,hedge,hedge,grass,grass,grass,grass,grass,grass]]
 
+
+# tilemap = Tilemap()
+
 for row in range(0, nheight):
     for column in range(0, nwidth):
         # print str(row)+","+str(column)
@@ -191,9 +203,6 @@ for row in range(0, nheight):
         # print(block_obj.getCollision(house_obj))
 
         textures[tilemap[row][column]].setXY(round(column * tilewidth_scaled), round(row * tileheight_scaled))
-
-
-
 
 
 while True:
@@ -247,11 +256,14 @@ while True:
             #print str(row)+","+str(column)
             #print(tilemap[row][column])
             #print(block_obj.getCollision(house_obj))
-            textures[tilemap[row][column]].setXY(round(column * tilewidth_scaled), round(row * tileheight_scaled))
+            current_tile = tilemap[row][column]
+            textures[current_tile].setXY(round(column * tilewidth_scaled), round(row * tileheight_scaled))
+            # print(round(column * tilewidth_scaled),round(row * tileheight_scaled))
             #textures[tilemap[row][column]].image_rect=(round(column * tilewidth_scaled), round(row * tileheight_scaled), m.ceil(tilewidth_scaled),m.ceil(tileheight_scaled))
             #print(textures[tilemap[row][column]].image_rect)
-            windowSurface.blit(textures[tilemap[row][column]].image_obj,textures[tilemap[row][column]].image_rect)
-
+            windowSurface.blit(textures[current_tile].image_obj,textures[current_tile].image_rect)
+            if current_tile == block:
+                player.collision_with(textures[current_tile])
 
     danny.playAnim(windowSurface, "down")
 
