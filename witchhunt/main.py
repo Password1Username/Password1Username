@@ -231,11 +231,13 @@ while True:
             scaleh = float(winy)/smallwiny
             tilewidth_scaled = round(scaled_variable(tilewidth,scalew))
             tileheight_scaled = round(scaled_variable(tileheight,scaleh))
-
+            # i=1
             for row in range(0, nheight):
                 for column in range(0, nwidth):
                     textures[tilemap[row][column]].setXY(column * tilewidth_scaled, row * tileheight_scaled)
                     textures[tilemap[row][column]].scaleValues(scalew, scaleh)
+                    # i+=1
+                    # print(i)
                     #print(textures[tilemap[row][column]].image_rect)
 
             house_scaled = house_obj
@@ -261,8 +263,8 @@ while True:
             # print(round(column * tilewidth_scaled),round(row * tileheight_scaled))
             #textures[tilemap[row][column]].image_rect=(round(column * tilewidth_scaled), round(row * tileheight_scaled), m.ceil(tilewidth_scaled),m.ceil(tileheight_scaled))
             #print(textures[tilemap[row][column]].image_rect)
-            windowSurface.blit(textures[current_tile].image_obj,textures[current_tile].image_rect)
-            if current_tile == block:
+            windowSurface.blit(textures[current_tile].image_obj, textures[current_tile].image_rect)
+            if current_tile in block_textures:
                 player.collision_with(textures[current_tile])
 
     danny.playAnim(windowSurface, "down")
