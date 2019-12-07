@@ -372,15 +372,15 @@ class MyPlayer(Inputs):
         # print(self.collision_rect)
         value=self.collision_rect.colliderect(sprite.collision_rect)
         if value==1:
-            if self.dx>0:
-                if self.incr_x > 0:  # Moving right; Hit the left side of the wall
-                    self.setX(sprite.collision_x1-sprite.collision_width)
-                if self.incr_x < 0: # Moving left; Hit the right side of the wall
-                    self.setX(sprite.collision_x2)
-                if self.incr_y > 0:  # Moving down; Hit the top side of the wall
-                    self.setY(sprite.collision_y1-sprite.collision_height)
-                if self.incr_y < 0:  # Moving up; Hit the bottom side of the wall
-                    self.setY(sprite.collision_y2)
+            # if self.dx>0:
+            if self.incr_x > 0:  # Moving right; Hit the left side of the wall
+                self.setX(sprite.collision_x1-self.collision_width)
+            elif self.incr_x < 0: # Moving left; Hit the right side of the wall
+                self.setX(sprite.collision_x2)
+            if self.incr_y > 0:  # Moving down; Hit the top side of the wall
+                self.setY(sprite.collision_y1-self.collision_height)
+            elif self.incr_y < 0:  # Moving up; Hit the bottom side of the wall
+                self.setY(sprite.collision_y2)
         return value
 
     def setX(self,valx):

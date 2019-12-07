@@ -264,6 +264,7 @@ while True:
             #textures[tilemap[row][column]].image_rect=(round(column * tilewidth_scaled), round(row * tileheight_scaled), m.ceil(tilewidth_scaled),m.ceil(tileheight_scaled))
             #print(textures[tilemap[row][column]].image_rect)
             windowSurface.blit(textures[current_tile].image_obj, textures[current_tile].image_rect)
+
             if current_tile in block_textures:
                 player.collision_with(textures[current_tile])
 
