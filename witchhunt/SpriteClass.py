@@ -356,6 +356,9 @@ class MyPlayer(Inputs):
     def setInitAnimation(self, name):
         self.Anim_scaled = self.Animation_scaled[name]
 
+    def intersect_with(self, rect_a, rect_b):
+        return rect_a.colliderect(rect_b)
+
     def collision_with(self, sprite):
         # print("player " + str(self.collision_rect))
         # print("player " + str(self.collision_rect), "sprite " + str(sprite.collision_rect))
@@ -365,38 +368,37 @@ class MyPlayer(Inputs):
         sprite_collision_rect = pygame.Rect(sprite.collision_x1, sprite.collision_y1,
                                             sprite.collision_width, sprite.collision_height)
 
-        value = anim_collision_rect.colliderect(sprite_collision_rect)
+        value = self.intersect_with(anim_collision_rect, sprite_collision_rect)
+
         if value == 1:
-            # if self.dx>0:
-            # print("player " + str(self.collision_rect), "sprite " + str(sprite.collision_rect))
+            if self.incr_x != 0:
+                # Moving right; Hit the left side of the tile
+                if anim_collision_rect.right + self.incr_x > sprite_collision_rect.left > anim_collision_rect.left:
 
-            sprite_collision_x2 = sprite.collision_x1 + sprite.collision_width
-            self_collision_x2 = self.collision_x1 + self.collision_width
-            sprite_collision_y2 = sprite.collision_y1 + sprite.collision_height
-            self_collision_y2 = self.collision_y1 + self.collision_height
+                    self.setX(sprite_collision_rect.left - self.width + abs(self.x_offset))
+                    print(self.x_offset)
+                    self.setCollisionX(self.x - self.x_offset)
 
-            if sprite.collision_x1 < self_collision_x2:  # Moving right; Hit the left side of the wall
+                # Moving left; Hit the right side of the tile
+                elif self.collision_x1 < sprite_collision_rect.right < anim_collision_rect.right + self.incr_x:
 
-                self.setX(sprite.collision_x1 - self.collision_width)
-                self.setCollisionX(self.x - self.x_offset)
-                # print("player " + str(self.collision_rect), "sprite " + str(sprite.collision_rect))
-                # print("")
+                    self.setX(sprite_collision_rect.right - abs(self.x_offset))
+                    self.setCollisionX(self.x - self.x_offset)
+            if self.incr_y != 0:
+                # Moving down; Hit the top side of the tile
+                if anim_collision_rect.bottom + self.incr_y > sprite_collision_rect.top > anim_collision_rect.top:
 
-            elif self.collision_x1 < sprite_collision_x2:  # Moving left; Hit the right side of the wall
-                self.setX(sprite_collision_x2)
-                self.setCollisionX(self.x - self.x_offset)
+                    # self.x_offset = self.x - self.collision_x1
+                    # self.y_offset = self.y - self.collision_y1
 
-            elif sprite.collision_y1 < self_collision_y2:  # Moving down; Hit the top side of the wall
-                # print("player " + str(self.collision_rect), "sprite " + str(sprite.collision_rect))
+                    self.setY(sprite.collision_y1 - self.height + abs(self.y_offset))
+                    self.setCollisionY(self.y - self.y_offset)
 
-                self.setY(sprite.collision_y1 - self.collision_height)
-                self.setCollisionY(self.y - self.y_offset)
+                # Moving up; Hit the bottom side of the tile
+                elif anim_collision_rect.bottom > sprite_collision_rect.bottom > self.collision_y1 + self.incr_y:
 
-                # print("player " + str(self.collision_rect), "sprite " + str(sprite.collision_rect))
-            elif sprite_collision_y2 > self.collision_y1:  # Moving up; Hit the bottom side of the wall
-
-                self.setY(sprite_collision_y2)
-                self.setCollisionY(self.y - self.y_offset)
+                    self.setY(sprite_collision_rect.bottom-abs(self.y_offset))
+                    self.setCollisionY(self.y - self.y_offset)
 
         return value
 
@@ -531,8 +533,7 @@ class MyPlayer(Inputs):
             self.incr_y = 0.0
             self.incr_x = 0.0
             self.Anim_scaled.pause()
-        deltax = self.dscale * self.incr_x
-        deltay = self.dscale * self.incr_y
+
         self.setX(round(self.x + self.dscale * self.incr_x))
         self.setY(round(self.y + self.dscale * self.incr_y))
 
@@ -542,7 +543,6 @@ class MyPlayer(Inputs):
         self.Anim_scaled.blit(surface, (self.x_scaled, self.y_scaled))
         pygame.draw.rect(surface, (0, 0, 0), Rect(self.collision_x1, self.collision_y1,
                                                   self.collision_width, self.collision_height))
-
 
     def playAnim(self, surface, name):
         # self.Animation_scaled[name].play()#.blit(surface, (self.x_scaled, self.y_scaled))
