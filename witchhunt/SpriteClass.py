@@ -96,13 +96,14 @@ class Inputs:
 
         return self.keyState
 
+
 '''Class storing parameters'''
+
 
 class MyObject():
     ''' The constructor of class '''
 
     def __init__(self, xpos=0.0, ypos=0.0):
-
         '''Scaling factors'''
         self.scaleinx = 1.0
         self.scaleiny = 1.0
@@ -119,23 +120,22 @@ class MyObject():
         self.x_scaled = self.x * self.scaleinx
         self.y_scaled = self.y * self.scaleiny
 
-
         '''Collision parameters'''
         self.collision_x1 = self.x
         self.collision_y1 = self.y
 
-
-        self.dx_scaled = self.dx*self.scaleinx
-        self.dy_scaled = self.dx*self.scaleiny
+        self.dx_scaled = self.dx * self.scaleinx
+        self.dy_scaled = self.dx * self.scaleiny
 
         self.collision_x1_scaled = self.x_scaled
         self.collision_y1_scaled = self.y_scaled
 
-'''Sprite Class'''
+
+# '''Sprite Class'''
 
 
 class MySprite(MyObject):
-    ''' The constructor of class '''
+    # ''' The constructor of class '''
 
     def __init__(self, imagePath, xpos=0.0, ypos=0.0):
         super().__init__()
@@ -154,82 +154,54 @@ class MySprite(MyObject):
         self.collision_width = self.width
         self.collision_height = self.height
 
-        self.collision_x2 = self.collision_x1 + self.collision_width
-        self.collision_y2 = self.collision_y1 + self.collision_height
-
-        self.collision_center_x = self.collision_x1 + 0.5*self.collision_width
-        self.collision_center_y = self.collision_y1 + 0.5*self.collision_height
-        self.collision_rect = self.image_rect
+        self.collision_center_x = self.collision_x1 + 0.5 * self.collision_width
+        self.collision_center_y = self.collision_y1 + 0.5 * self.collision_height
 
         # '''Scaled quantities'''
-
         self.width_scaled = self.width * self.scaleinx
         self.height_scaled = self.height * self.scaleiny
-        self.image_rect_scaled = pygame.Rect(self.x_scaled, self.y_scaled, self.width_scaled, self.height_scaled)
 
         # print(self.width)
         # exit()
 
-
-        self.collision_x2_scaled = self.collision_x1_scaled + self.width_scaled
-
-        self.collision_y2_scaled = self.collision_y1_scaled + self.height_scaled
         self.collision_width_scaled = self.width_scaled
         self.collision_height_scaled = self.height_scaled
-        self.collision_rect_scaled = self.image_rect_scaled
 
-        self.collision_center_x_scaled = self.collision_x1_scaled + 0.5*self.collision_width_scaled
-        self.collision_center_y_scaled = self.collision_y1_scaled + 0.5*self.collision_height_scaled
+        self.collision_center_x_scaled = self.collision_x1_scaled + 0.5 * self.collision_width_scaled
+        self.collision_center_y_scaled = self.collision_y1_scaled + 0.5 * self.collision_height_scaled
 
-
-    def setXY(self, valx, valy):
-        self.x = valx
-        self.y = valy
-        # print(self.width,self.height)
-        self.image_rect = pygame.Rect(self.x, self.y, self.width, self.height)
-        self.setCollisionPos(self.x, self.x + self.collision_width, self.y, self.y + self.collision_height)
-
-        self.x_scaled = self.x * self.scaleinx
-        self.y_scaled = self.y * self.scaleiny
-        self.image_rect_scaled = pygame.Rect(self.x_scaled, self.y_scaled, self.width_scaled, self.height_scaled)
-        # print(self.collision_width,self.collision_height)
-        # self.setCollisionPos(self.x, self.x + self.collision_width, self.y, self.y + self.collision_height)
-
+    # Getter functions
     def getObj(self):
         return self.image_obj
 
     def getWidth(self):
         return self.width
 
-    def getHight(self):
+    def getHeight(self):
         return self.height
 
-    def setCollisionPos(self, collX1, collX2, collY1, collY2):
+    def setCollisionX(self, collX1):
         self.collision_x1 = collX1
-        self.collision_x2 = collX2
-        self.collision_y1 = collY1
-        self.collision_y2 = collY2
-        if not self.collision_width:
-            self.collision_width = self.collision_x2 - self.collision_x1
-            self.collision_height = self.collision_y2 - self.collision_y1
-        # print(self.collision_x1, self.collision_y1)
-        # print(self.collision_width,self.collision_height)
-        self.collision_rect = pygame.Rect(self.collision_x1, self.collision_y1,
-                                          self.collision_width, self.collision_height)
+        self.collision_x1_scaled = collX1 * self.scaleinx
 
-        ''' Scaled quantities'''
-        self.collision_x1_scaled = self.collision_x1 * self.scaleinx
-        self.collision_x2_scaled = self.collision_x2 * self.scaleinx
-        self.collision_y1_scaled = self.collision_y1 * self.scaleiny
-        self.collision_y2_scaled = self.collision_y2 * self.scaleiny
-        self.collision_width_scaled = self.collision_x2_scaled - self.collision_x1_scaled
-        self.collision_height_scaled = self.collision_y2_scaled - self.collision_y1_scaled
-        self.collision_rect_scaled = pygame.Rect(self.collision_x1_scaled, self.collision_y1_scaled,
-                                                 self.collision_width_scaled, self.collision_height_scaled)
+    def setCollisionY(self, collY1):
+        self.collision_y1 = collY1
+        self.collision_y1_scaled = collY1 * self.scaleiny
+
+    def setCollisionWidth(self, collw):
+        self.collision_width = collw
+        self.collision_width_scaled = collw * self.scaleinx
+
+    def setCollisionHeight(self, collh):
+        self.collision_height = collh
+        self.collision_height_scaled = collh * self.scaleiny
 
     def collision_with(self, sprite):
 
-        if self.collision_rect.colliderect(sprite.collision_rect):
+        collision_rect = pygame.Rect(self.collision_x1, self.collision_y1_,
+                                     self.collision_width, self.collision_height)
+
+        if collision_rect.colliderect(sprite.collision_rect):
             # print(sprite.collision_rect)
             # print(self.collision_rect)
             print("Collision detected")
@@ -252,9 +224,7 @@ class MySprite(MyObject):
 
         '''Collision parameters'''
         self.collision_x1_scaled = int(self.scaleinx * self.collision_x1)
-        self.collision_x2_scaled = int(self.scaleinx * self.collision_x2)
         self.collision_y1_scaled = int(self.scaleiny * self.collision_y1)
-        self.collision_y2_scaled = int(self.scaleiny * self.collision_y2)
         self.collision_width_scaled = int(self.scaleinx * self.collision_width)
         self.collision_height_scaled = int(self.scaleiny * self.collision_height)
         # print(self.collision_x1_scaled, self.collision_y1_scaled,self.collision_width_scaled, self.collision_height_scaled)
@@ -264,8 +234,14 @@ class MySprite(MyObject):
                                                  self.collision_width_scaled, self.collision_height_scaled)
         # print(rect ,self.collision_rect_scaled)
 
+    def setX(self, valx):
+        self.x = valx
+        self.x_scaled = self.x * self.scaleinx
 
+    def setY(self, valy):
 
+        self.y = valy
+        self.y_scaled = self.y * self.scaleiny
 
 
 class MyPlayer(Inputs):
@@ -315,25 +291,22 @@ class MyPlayer(Inputs):
         self.image_rect = pygame.Rect(self.x, self.y, self.width, self.height)
         self.image_rect_scaled = pygame.Rect(self.x_scaled, self.y_scaled, self.width_scaled, self.height_scaled)
 
-
         '''Collision parameters'''
         self.collision_x1 = self.x
-        self.collision_x2 = self.collision_x1 + self.width
         self.collision_y1 = self.y
-        self.collision_y2 = self.collision_y1 + self.height
+
         self.collision_width = self.width
         self.collision_height = self.height
-        self.collision_rect = self.image_rect
-        self.collision_center_x = self.x + 0.5 * self.width
-        self.collision_center_y = self.y + 0.5 * self.height
+
+        self.x_offset = self.x - self.collision_x1
+        self.y_offset = self.y - self.collision_y1
 
         self.collision_x1_scaled = self.x_scaled
-        self.collision_x2_scaled = self.collision_x1_scaled + self.width_scaled
         self.collision_y1_scaled = self.y_scaled
-        self.collision_y2_scaled = self.collision_y1_scaled + self.height_scaled
+
         self.collision_width_scaled = self.width_scaled
         self.collision_height_scaled = self.height_scaled
-        self.collision_rect_scaled = self.image_rect_scaled
+
         self.collision_center_x_scaled = self.x_scaled + 0.5 * self.width_scaled
         self.collision_center_y_scaled = self.y_scaled + 0.5 * self.height_scaled
 
@@ -346,14 +319,11 @@ class MyPlayer(Inputs):
         if self.width == 0:
             self.width = frames[0][2]
             self.collision_x1 = self.x
-            self.collision_x2 = self.x + self.width
             self.collision_width = self.width
 
             self.width_scaled = frames[0][2]
             self.collision_x1_scaled = self.x * self.scaleinx
-            self.collision_x2_scaled = self.x_scaled + self.width_scaled
             self.collision_width_scaled = self.width * self.scaleinx
-
 
         if not self.y:
             self.y = frames[0][3]
@@ -386,80 +356,64 @@ class MyPlayer(Inputs):
     def setInitAnimation(self, name):
         self.Anim_scaled = self.Animation_scaled[name]
 
-    def setCollisionPos(self, collx1, collx2, colly1, colly2):
-
-        self.collision_x1 = collx1
-        self.collision_x2 = collx2
-        self.collision_y1 = colly1
-        self.collision_y2 = colly2
-        self.collision_width = self.collision_x2 - self.collision_x1
-        self.collision_height = self.collision_y2 - self.collision_y1
-        self.collision_rect = pygame.Rect(self.collision_x1, self.collision_y1, self.collision_width,
-                                          self.collision_height)
-
-        self.collision_x1_scaled = self.collision_x1 * self.scaleinx
-        self.collision_x2_scaled = self.collision_x2 * self.scaleinx
-        self.collision_y1_scaled = self.collision_y1 * self.scaleiny
-        self.collision_y2_scaled = self.collision_y2 * self.scaleiny
-        self.collision_width_scaled = self.collision_x2_scaled - self.collision_x1_scaled
-        self.collision_height_scaled = self.collision_y2_scaled - self.collision_y1_scaled
-        self.collision_rect_scaled = pygame.Rect(self.collision_x1_scaled, self.collision_y1_scaled,
-                                                 self.collision_width_scaled, self.collision_height_scaled)
-
-
     def collision_with(self, sprite):
         # print("player " + str(self.collision_rect))
-        #print("player " + str(self.collision_rect), "sprite " + str(sprite.collision_rect))
+        # print("player " + str(self.collision_rect), "sprite " + str(sprite.collision_rect))
         # print(self.collision_rect)
-        value=self.collision_rect.colliderect(sprite.collision_rect)
-        if value==1:
+        anim_collision_rect = pygame.Rect(self.collision_x1, self.collision_y1, self.collision_width,
+                                          self.collision_height)
+        sprite_collision_rect = pygame.Rect(sprite.collision_x1, sprite.collision_y1,
+                                            sprite.collision_width, sprite.collision_height)
+
+        value = anim_collision_rect.colliderect(sprite_collision_rect)
+        if value == 1:
             # if self.dx>0:
             # print("player " + str(self.collision_rect), "sprite " + str(sprite.collision_rect))
-            if sprite.collision_x1 < self.collision_x2:  # Moving right; Hit the left side of the wall
 
-                self.setX(sprite.collision_x1-self.collision_width)
-                self.setCollisionPos(sprite.collision_x1-self.collision_width,sprite.collision_x2,self.collision_y1,self.collision_y2)
+            sprite_collision_x2 = sprite.collision_x1 + sprite.collision_width
+            self_collision_x2 = self.collision_x1 + self.collision_width
+            sprite_collision_y2 = sprite.collision_y1 + sprite.collision_height
+            self_collision_y2 = self.collision_y1 + self.collision_height
+
+            if sprite.collision_x1 < self_collision_x2:  # Moving right; Hit the left side of the wall
+
+                self.setX(sprite.collision_x1 - self.collision_width)
+                self.setCollisionX(self.x - self.x_offset)
                 # print("player " + str(self.collision_rect), "sprite " + str(sprite.collision_rect))
                 # print("")
 
-            elif sprite.collision_x2 > self.collision_x1: # Moving left; Hit the right side of the wall
-                self.setX(sprite.collision_x2)
-                self.setCollisionPos(sprite.collision_x2,sprite.collision_x2+self.collision_width, self.collision_y1,
-                                     self.collision_y2)
+            elif self.collision_x1 < sprite_collision_x2:  # Moving left; Hit the right side of the wall
+                self.setX(sprite_collision_x2)
+                self.setCollisionX(self.x - self.x_offset)
 
-            if sprite.collision_y1 < self.collision_y2:  # Moving down; Hit the top side of the wall
+            elif sprite.collision_y1 < self_collision_y2:  # Moving down; Hit the top side of the wall
                 # print("player " + str(self.collision_rect), "sprite " + str(sprite.collision_rect))
-                self.setY(sprite.collision_y1-self.collision_height)
-                self.setCollisionPos(sprite.collision_x1, sprite.collision_x2, sprite.collision_y1-self.collision_height,
-                                     sprite.collision_y1)
-                # print("player " + str(self.collision_rect), "sprite " + str(sprite.collision_rect))
-            elif sprite.collision_y2 > self.collision_y1:  # Moving up; Hit the bottom side of the wall
 
-                self.setY(sprite.collision_y2)
-                self.setCollisionPos(sprite.collision_x1,sprite.collision_x2, sprite.collision_y1,sprite.collision_y2+self.collision_height)
+                self.setY(sprite.collision_y1 - self.collision_height)
+                self.setCollisionY(self.y - self.y_offset)
+
+                # print("player " + str(self.collision_rect), "sprite " + str(sprite.collision_rect))
+            elif sprite_collision_y2 > self.collision_y1:  # Moving up; Hit the bottom side of the wall
+
+                self.setY(sprite_collision_y2)
+                self.setCollisionY(self.y - self.y_offset)
+
         return value
 
-    def setX(self,valx):
+    def setX(self, valx):
         self.x = valx
         self.x_scaled = self.x * self.scaleinx
 
-    def setY(self,valy):
+    def setY(self, valy):
 
         self.y = valy
         self.y_scaled = self.y * self.scaleiny
 
-
-    def setXY(self, valx, valy):
-
-        self.x = valx
-        self.x_scaled = self.x * self.scaleinx
-
-        self.y = valy
-        self.y_scaled = self.y * self.scaleiny
-
-    def setdxdy(self, valdx, valdy):
+    def setdx(self, valdx):
         self.dx = valdx
         self.dx_scaled = self.dx * self.scaleinx
+
+    def setdy(self, valdy):
         self.dy = valdy
         self.dy_scaled = self.dy * self.scaleiny
 
@@ -467,43 +421,32 @@ class MyPlayer(Inputs):
         self.scaleinx = scalew
         self.scaleiny = scaleh
         # print(self.scaleinx, self.scaleiny)
-        self.scaleValues()
 
-    def scaleValues(self):
-        # self.image_rect = scalew*self.image_obj.get_rect()
-        # print (self.scaleinx, self.scaleiny)
-        self.x_scaled = int(round(self.scaleinx * self.x))
-        self.y_scaled = int(round(self.scaleiny * self.y))
-        # self.dx_scaled = int(round(self.scalew * self.dx))
-        # self.dy_scaled = int(round(self.scaleh * self.dy))
-        self.width_scaled = int(round(self.scaleinx * self.width))
-        self.height_scaled = int(round(self.scaleiny * self.height))
-        # self.Animation_scaled={key: value for key, value in d.items()}
-        # self.inv_scalew=1.0/scalew
-        # self.inv_scaleh=1.0/scaleh
-        # print self.x_scaled , self.y_scaled
-        for key in self.Animation_scaled.keys():
-            '''Warning, getCopy is necessary to avoid issues with memory address storage of transformations'''
-            '''https://github.com/asweigart/pyganim/blob/master/examples/simulation_time_demo.py'''
-            self.Animation_scaled[key] = self.Animation[key].getCopy()
-            self.Animation_scaled[key].smoothscale((self.width_scaled, self.height_scaled))
-            self.Animation_scaled[key].makeTransformsPermanent()
-            # .smoothscale((self.width_scaled, self.height_scaled))
+    def setCollisionX(self, collX1):
+        self.collision_x1 = collX1
+        self.collision_x1_scaled = collX1 * self.scaleinx
 
-            self.Anim_scaled = self.Anim.getCopy()
-            self.Anim_scaled.smoothscale((self.width_scaled, self.height_scaled))
-            self.Anim_scaled.makeTransformsPermanent()
+    def setCollisionY(self, collY1):
+        self.collision_y1 = collY1
+        self.collision_y1_scaled = collY1 * self.scaleiny
 
-        '''Collision parameters'''
-        self.collision_x1_scaled = int(round(self.scaleinx * self.collision_x1))
-        self.collision_x2_scaled = int(round(self.scaleinx * self.collision_x2))
-        self.collision_y1_scaled = int(round(self.scaleiny * self.collision_y1))
-        self.collision_y2_scaled = int(round(self.scaleiny * self.collision_y2))
+    def set_hitbox_X(self, collX1):
+        self.x_offset = self.x - collX1
+        self.collision_x1 = collX1
+        self.collision_x1_scaled = collX1 * self.scaleinx
 
-        self.collision_width_scaled = int(round(self.scaleinx * self.collision_width))
-        self.collision_height_scaled = int(round(self.scaleiny * self.collision_height))
-        self.collision_rect = pygame.Rect(self.collision_x1_scaled, self.collision_y1_scaled,
-                                          self.collision_width_scaled, self.collision_height_scaled)
+    def set_hitbox_Y(self, collY1):
+        self.y_offset = self.y - collY1
+        self.collision_y1 = collY1
+        self.collision_y1_scaled = collY1 * self.scaleiny
+
+    def setCollisionWidth(self, collw):
+        self.collision_width = collw
+        self.collision_width_scaled = collw * self.scaleinx
+
+    def setCollisionHeight(self, collh):
+        self.collision_height = collh
+        self.collision_height_scaled = collh * self.scaleiny
 
     def move(self, event, surface):
         # dx = 0.0
@@ -517,7 +460,7 @@ class MyPlayer(Inputs):
         pressedKeys = sum(keyState.values())
         # print(pressedKeys)
 
-        '''Efficient way to implement keys with minimal'''
+        # '''Efficient way to implement keys with minimal'''
 
         if pressedKeys == 2:
             if keyState['up']:
@@ -590,15 +533,16 @@ class MyPlayer(Inputs):
             self.Anim_scaled.pause()
         deltax = self.dscale * self.incr_x
         deltay = self.dscale * self.incr_y
-        self.x = round(self.x + self.dscale * self.incr_x)
-        self.y = round(self.y + self.dscale * self.incr_y)
-        self.x_scaled = self.x * self.scaleinx
-        self.y_scaled = self.y * self.scaleiny
+        self.setX(round(self.x + self.dscale * self.incr_x))
+        self.setY(round(self.y + self.dscale * self.incr_y))
+
         # print(self.collision_width,self.collision_height)
-        self.setCollisionPos(deltax + self.collision_x1, deltax + self.collision_x2, deltay+self.collision_y1, deltay+self.collision_y2)
+        self.setCollisionX(self.x - self.x_offset)
+        self.setCollisionY(self.y - self.y_offset)
         self.Anim_scaled.blit(surface, (self.x_scaled, self.y_scaled))
-        pygame.draw.rect(surface, (0, 0, 0), Rect(self.collision_x1_scaled, self.collision_y1_scaled,
-                                                  self.collision_width_scaled, self.collision_width_scaled))
+        pygame.draw.rect(surface, (0, 0, 0), Rect(self.collision_x1, self.collision_y1,
+                                                  self.collision_width, self.collision_height))
+
 
     def playAnim(self, surface, name):
         # self.Animation_scaled[name].play()#.blit(surface, (self.x_scaled, self.y_scaled))
@@ -609,5 +553,3 @@ class MyPlayer(Inputs):
         self.Anim_scaled.play()
         # print(self.x_scaled, self.y_scaled)
         self.Anim_scaled.blit(surface, (self.x_scaled, self.y_scaled))
-
-

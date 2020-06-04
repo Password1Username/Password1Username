@@ -5,13 +5,13 @@
 import sys
 import os
 
-sys.path.append(os.path.abspath('..'))
 import pygame
 from pygame.locals import *
-import pyganim
 import math as m
-from SpriteClass import MySprite, MyPlayer
-from tilemap import materials, Tilemap
+import SpriteClass
+import tilemap
+
+sys.path.append(os.path.abspath('..'))
 
 pygame.init()
 
@@ -54,7 +54,7 @@ pygame.display.set_caption('Witch Hunt')
 # house = pygame.image.load('./pics/buildings/haus1.png')
 
 # First try for using the sprite class
-house_obj = MySprite('./pics/buildings/haus1.png', housex, housey)
+house_obj = SpriteClass.MySprite('./pics/buildings/haus1.png', housex, housey)
 # house_obj
 # house_obj.
 
@@ -84,7 +84,7 @@ rects_right = [(spritex + 3 * spritewidth, spritey + spriteheight, spritewidth, 
 
 # playerAnim_scaled = playerAnim_down
 
-player = MyPlayer(xpos=0.0, ypos=0.0)
+player = SpriteClass.MyPlayer(xpos=0.0, ypos=0.0)
 player.setAnimation('./pics/blueboy_64_40.png', rects_down, "down")
 player.setAnimation('./pics/blueboy_64_40.png', rects_up, "up")
 player.setAnimation('./pics/blueboy_64_40.png', rects_left, "left")
@@ -94,21 +94,28 @@ player.setInitAnimation("down")
 player_initx = 0.0
 player_inity = 0.0
 
-player.setXY(player_initx, player_inity)
+hitbox_length = 28
 
-hitbox_2 = 16
-col_initx1 = player.collision_center_x - hitbox_2
-col_initx2 = player.collision_center_x + hitbox_2
-col_inity1 = player.collision_center_y - hitbox_2
-col_inity2 = player.collision_center_y + hitbox_2
+col_initx1 = 18
+col_inity1 = 5
 
-player.setCollisionPos(col_initx1, col_initx2, col_inity1, col_inity2)
+
+
+player.setX(player_initx)
+player.setY(player_inity)
+
+player.set_hitbox_X(col_initx1)
+player.set_hitbox_Y(col_inity1)
+player.setCollisionWidth(hitbox_length)
+player.setCollisionHeight(hitbox_length)
+
 # print(player.collision_rect)
 # exit()
 # print(player.x_scaled, player.y_scaled)
-player.setdxdy(dx, dy)
+player.setdx(dx)
+player.setdy(dy)
 
-danny = MyPlayer(xpos=0, ypos=0)
+danny = SpriteClass.MyPlayer(xpos=0, ypos=0)
 
 rects_down_danny = [(spritex, spritey, spritewidth, spriteheight),
                     (spritex + spritewidth, spritey, spritewidth, spriteheight),
@@ -117,9 +124,9 @@ rects_down_danny = [(spritex, spritey, spritewidth, spriteheight),
 
 danny.setAnimation('./pics/people/danny_64_40.png', rects_down_danny, "down")
 danny.setInitAnimation("down")
-danny.setXY(0.0, 100.0)
+danny.setX(0.0)
+danny.setY(100.0)
 # print(danny.x_scaled, danny.y_scaled)
-# player.setdxdy(dx,dy)
 
 
 """Used to scale objects."""
@@ -151,42 +158,15 @@ red = (100, 50, 50)
 grassgreen = (170, 244, 66)
 earthbrown = (230, 115, 0)
 
-grass = 0
-dirt = 1
-water = 3
-hedge = 4
-stone = 5
-block = 6
 
-'''Initialization of sprite objects'''
-grass_obj = MySprite('./pics/terrain/grass-map-periodic.png')
-dirt_obj = MySprite('./pics/terrain/dirt-map.png')
-water_obj = MySprite('./pics/terrain/water-map.png')
-stone_obj = MySprite('./pics/boundaries/stone-map.png')
-hedge_obj = MySprite('./pics/boundaries/hedge-map-green.png')
-block_obj = MySprite('./pics/boundaries/block-map.png')
+current_game_map = tilemap.Tilemap().tilemap_one()
+current_game_map_textures = tilemap.textures
 
-textures = {
-    grass: grass_obj,
-    dirt: dirt_obj,
-    stone: stone_obj,
-    water: water_obj,
-    hedge: hedge_obj,
-    block: block_obj
-}
-
-block_textures = {
-    stone: stone_obj,
-    water: water_obj,
-    hedge: hedge_obj,
-    block: block_obj}
-
-tilemap = Tilemap().tilemap_one()
 
 for row in range(0, nheight):
     for column in range(0, nwidth):
-        textures[tilemap[row][column]].setXY(round(column * tilewidth), round(row * tileheight))
-        # textures[tilemap[row][column]].setXY(round(column * tilewidth_scaled), round(row * tileheight_scaled))
+        current_game_map_textures[current_game_map[row][column]].setX(round(column * tilewidth))
+        current_game_map_textures[current_game_map[row][column]].setY(round(row * tileheight))
 
 while True:
     windowSurface.fill(grassgreen)
@@ -197,10 +177,9 @@ while True:
             pygame.quit()
             sys.exit()
 
-        '''
-        Video resize code via Stack Exchange
-        https://stackoverflow.com/questions/11603222/allowing-resizing-window-pygame
-        '''
+        # Video resize code via Stack Exchange
+        # https://stackoverflow.com/questions/11603222/allowing-resizing-window-pygame
+
         if event.type == pygame.VIDEORESIZE:
             # There's some code to add back window content here.
 
@@ -217,8 +196,9 @@ while True:
 
             for row in range(0, nheight):
                 for column in range(0, nwidth):
-                    textures[tilemap[row][column]].setXY(column * tilewidth_scaled, row * tileheight_scaled)
-                    textures[tilemap[row][column]].scaleValues(scalew, scaleh)
+                    current_game_map_textures[current_game_map[row][column]].setX(column * tilewidth_scaled)
+                    current_game_map_textures[current_game_map[row][column]].setY(row * tileheight_scaled)
+                    current_game_map_textures[current_game_map[row][column]].scaleValues(scalew, scaleh)
                     # i+=1
                     # print(i)
                     # print(textures[tilemap[row][column]].image_rect)
@@ -234,31 +214,29 @@ while True:
             # danny.playAnim"down"]
             # danny.move(event, windowSurface)
 
-    '''Inter'''
+    # '''Inter'''
     for row in range(0, nheight):
         for column in range(0, nwidth):
             # print str(row)+","+str(column)
             # print(tilemap[row][column])
             # print(block_obj.getCollision(house_obj))
-            current_tile = tilemap[row][column]
-            textures[current_tile].setXY(round(column * tilewidth_scaled), round(row * tileheight_scaled))
+            current_tile = current_game_map[row][column]
+            current_game_map_textures[current_tile].setX(round(column * tilewidth_scaled))
+            current_game_map_textures[current_tile].setY(round(row * tileheight_scaled))
             # print(round(column * tilewidth_scaled),round(row * tileheight_scaled))
-            textures[tilemap[row][column]].image_rect = (
-            round(column * tilewidth_scaled), round(row * tileheight_scaled), m.ceil(tilewidth_scaled),
-            m.ceil(tileheight_scaled))
+            current_game_map_textures[current_game_map[row][column]].image_rect = (
+                round(column * tilewidth_scaled), round(row * tileheight_scaled), m.ceil(tilewidth_scaled),
+                m.ceil(tileheight_scaled))
             # print(textures[tilemap[row][column]].image_rect)
-            windowSurface.blit(textures[current_tile].image_obj, textures[current_tile].image_rect)
+            windowSurface.blit(current_game_map_textures[current_tile].image_obj, current_game_map_textures[current_tile].image_rect)
 
-            if current_tile in block_textures:
-                player.collision_with(textures[current_tile])
-                # if tilemap[row][column] == block:
-                # textures[tilemap[row][column]].coll
-                # print(player.collision_rect,textures[tilemap[row][column]].collision_rect)
-
-            # col_initx1 = player_Rx - hitbox_2
-    # col_initx2 = player_Rx + hitbox_2
-    # col_inity1 = player_Ry - hitbox_2
-    # col_inity2 = player_Ry + hitbox_2
+            if current_tile in tilemap.block_textures:
+                current_game_map_textures[current_tile].setCollisionX(round(column * tilewidth_scaled))
+                current_game_map_textures[current_tile].setCollisionY(round(row * tileheight_scaled))
+                # pygame.draw.rect(windowSurface, (0, 0, 0), Rect(textures[current_tile].collision_x1,
+                # textures[current_tile].collision_y1, textures[current_tile].collision_width,
+                #                                           textures[current_tile].collision_height))
+                player.collision_with(current_game_map_textures[current_tile])
 
     # pygame.draw.rect(windowSurface, (0,0,0), Rect(player.col, col_inity1,2*hitbox_2,2*hitbox_2))
     # print(Rect(col_initx1, col_inity1, 2 * hitbox_2, 2 * hitbox_2))

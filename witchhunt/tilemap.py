@@ -1,3 +1,38 @@
+import SpriteClass
+
+grass = 0
+dirt = 1
+water = 3
+hedge = 4
+stone = 5
+block = 6
+
+
+#  '''Initialization of sprite objects'''
+grass_obj = SpriteClass.MySprite('./pics/terrain/grass-map-periodic.png')
+dirt_obj = SpriteClass.MySprite('./pics/terrain/dirt-map.png')
+water_obj = SpriteClass.MySprite('./pics/terrain/water-map.png')
+stone_obj = SpriteClass.MySprite('./pics/boundaries/stone-map.png')
+hedge_obj = SpriteClass.MySprite('./pics/boundaries/hedge-map-green.png')
+block_obj = SpriteClass.MySprite('./pics/boundaries/block-map.png')
+
+textures = {
+    grass: grass_obj,
+    dirt: dirt_obj,
+    stone: stone_obj,
+    water: water_obj,
+    hedge: hedge_obj,
+    block: block_obj
+}
+
+block_textures = {
+    stone: stone_obj,
+    water: water_obj,
+    hedge: hedge_obj,
+    block: block_obj}
+
+
+
 materials = {"grass": 0, "dirt": 1, "water": 3, "hedge": 4, "stone": 5, "block": 6}
 
 class Tilemap():
