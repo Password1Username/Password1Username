@@ -2,6 +2,8 @@ import pygame
 from pygame.locals import *
 import pyganim
 
+pygame.init()
+
 
 # '''Inputs: https://stackoverflow.com/questions/15652459/pygame-arrow-control'''
 #
@@ -48,17 +50,6 @@ class Inputs:
                 return binding
 
         return "not found"
-
-    # def getInputState(self,event):
-    #     if event.type == pygame.KEYDOWN:
-    #         binding = self.lookupBinding(event.key)
-    #         if binding != "not found":
-    #             # newInput = Input()
-    #             self.inputState[binding] = True
-    #     if event.type == pygame.KEYUP:
-    #         binding = self.lookupBinding(event.key)
-    #         if binding != "not found":
-    #             self.inputState[binding] = False
 
     def getInputState(self, event):
 
@@ -131,13 +122,11 @@ class MyObject():
         self.collision_y1_scaled = self.y_scaled
 
 
-# '''Sprite Class'''
-
-
+# MySprite Class
 class MySprite(MyObject):
     # ''' The constructor of class '''
 
-    def __init__(self, imagePath, xpos=0.0, ypos=0.0):
+    def __init__(self, imagePath):
         super().__init__()
         # ''' Load image object '''
         self.image_obj_original = pygame.image.load(imagePath)
@@ -236,12 +225,12 @@ class MySprite(MyObject):
 
     def setX(self, valx):
         self.x = valx
-        self.x_scaled = self.x * self.scaleinx
+        self.x_scaled = valx * self.scaleinx
 
     def setY(self, valy):
 
         self.y = valy
-        self.y_scaled = self.y * self.scaleiny
+        self.y_scaled = valy * self.scaleiny
 
 
 class MyPlayer(Inputs):
@@ -310,6 +299,72 @@ class MyPlayer(Inputs):
         self.collision_center_x_scaled = self.x_scaled + 0.5 * self.width_scaled
         self.collision_center_y_scaled = self.y_scaled + 0.5 * self.height_scaled
 
+    """Setter functions"""
+    def setX(self, valx):
+        self.x = valx
+        self.x_scaled = self.x * self.scaleinx
+
+    def setY(self, valy):
+
+        self.y = valy
+        self.y_scaled = self.y * self.scaleiny
+
+    def setdx(self, valdx):
+        self.dx = valdx
+        self.dx_scaled = self.dx * self.scaleinx
+
+    def setdy(self, valdy):
+        self.dy = valdy
+        self.dy_scaled = self.dy * self.scaleiny
+
+    def setScale(self, scalew, scaleh):
+        self.scaleinx = scalew
+        self.scaleiny = scaleh
+        # print(self.scaleinx, self.scaleiny)
+
+    def setCollisionX(self, collX1):
+        self.collision_x1 = collX1
+        self.collision_x1_scaled = collX1 * self.scaleinx
+
+    def setCollisionY(self, collY1):
+        self.collision_y1 = collY1
+        self.collision_y1_scaled = collY1 * self.scaleiny
+
+    def set_hitbox_X(self, collX1):
+        self.x_offset = self.x - collX1
+        self.collision_x1 = collX1
+        self.collision_x1_scaled = collX1 * self.scaleinx
+
+    def set_hitbox_Y(self, collY1):
+        self.y_offset = self.y - collY1
+        self.collision_y1 = collY1
+        self.collision_y1_scaled = collY1 * self.scaleiny
+
+    def set_dx(self, val_dx):
+        self.dx = val_dx
+
+    def set_dy(self, val_dy):
+        self.dy = val_dy
+
+    def set_incr_x(self, val_incr_x):
+        self.incr_x = val_incr_x
+        self.incr_x_scaled = val_incr_x * self.scaleinx
+
+    def set_incr_y(self, val_incr_y):
+        self.incr_y = val_incr_y
+        self.incr_y_scaled = val_incr_y * self.scaleiny
+
+    def set_collision_width(self, collw):
+        self.collision_width = collw
+        self.collision_width_scaled = collw * self.scaleinx
+
+    def set_collision_height(self, collh):
+        self.collision_height = collh
+        self.collision_height_scaled = collh * self.scaleiny
+
+    def setInitAnimation(self, name):
+        self.Anim_scaled = self.Animation_scaled[name]
+
     def setAnimation(self, spritesheet, frames, name):
         # print frames
 
@@ -353,9 +408,6 @@ class MyPlayer(Inputs):
             else:
                 self.Anim_scaled = self.Animation_scaled[name]
 
-    def setInitAnimation(self, name):
-        self.Anim_scaled = self.Animation_scaled[name]
-
     def intersect_with(self, rect_a, rect_b):
         return rect_a.colliderect(rect_b)
 
@@ -376,7 +428,7 @@ class MyPlayer(Inputs):
                 if anim_collision_rect.right + self.incr_x > sprite_collision_rect.left > anim_collision_rect.left:
 
                     self.setX(sprite_collision_rect.left - self.width + abs(self.x_offset))
-                    print(self.x_offset)
+                    # print(self.x_offset)
                     self.setCollisionX(self.x - self.x_offset)
 
                 # Moving left; Hit the right side of the tile
@@ -397,134 +449,74 @@ class MyPlayer(Inputs):
                 # Moving up; Hit the bottom side of the tile
                 elif anim_collision_rect.bottom > sprite_collision_rect.bottom > self.collision_y1 + self.incr_y:
 
-                    self.setY(sprite_collision_rect.bottom-abs(self.y_offset))
+                    self.setY(sprite_collision_rect.bottom - abs(self.y_offset))
                     self.setCollisionY(self.y - self.y_offset)
 
         return value
 
-    def setX(self, valx):
-        self.x = valx
-        self.x_scaled = self.x * self.scaleinx
-
-    def setY(self, valy):
-
-        self.y = valy
-        self.y_scaled = self.y * self.scaleiny
-
-    def setdx(self, valdx):
-        self.dx = valdx
-        self.dx_scaled = self.dx * self.scaleinx
-
-    def setdy(self, valdy):
-        self.dy = valdy
-        self.dy_scaled = self.dy * self.scaleiny
-
-    def setScale(self, scalew, scaleh):
-        self.scaleinx = scalew
-        self.scaleiny = scaleh
-        # print(self.scaleinx, self.scaleiny)
-
-    def setCollisionX(self, collX1):
-        self.collision_x1 = collX1
-        self.collision_x1_scaled = collX1 * self.scaleinx
-
-    def setCollisionY(self, collY1):
-        self.collision_y1 = collY1
-        self.collision_y1_scaled = collY1 * self.scaleiny
-
-    def set_hitbox_X(self, collX1):
-        self.x_offset = self.x - collX1
-        self.collision_x1 = collX1
-        self.collision_x1_scaled = collX1 * self.scaleinx
-
-    def set_hitbox_Y(self, collY1):
-        self.y_offset = self.y - collY1
-        self.collision_y1 = collY1
-        self.collision_y1_scaled = collY1 * self.scaleiny
-
-    def setCollisionWidth(self, collw):
-        self.collision_width = collw
-        self.collision_width_scaled = collw * self.scaleinx
-
-    def setCollisionHeight(self, collh):
-        self.collision_height = collh
-        self.collision_height_scaled = collh * self.scaleiny
-
-    def move(self, event, surface):
-        # dx = 0.0
-        # dy = 0.0
-        # dx = 0.0
-        # dy = 0.0
-        # dscale = 1.0
-
-        keyState = super().getKeyState(event)
+    def move(self, surface, event):
+        """ This method is used to map keyboard inputs to the animations and their position """
+        key_state = super().getKeyState(event)
         # print(inputState)
-        pressedKeys = sum(keyState.values())
-        # print(pressedKeys)
+        pressed_keys = sum(key_state.values())
+        # print(pressed_keys)
 
         # '''Efficient way to implement keys with minimal'''
+        self.incr_x = 0
+        self.incr_y = 0
 
-        if pressedKeys == 2:
-            if keyState['up']:
-                if keyState['left']:
+        if pressed_keys == 2:
+            if key_state['up']:
+                if key_state['left']:
                     self.incr_x = -0.71 * self.dx
                     self.incr_y = -0.71 * self.dy
-                elif keyState['right']:
+                elif key_state['right']:
                     self.incr_x = 0.71 * self.dx
                     self.incr_y = -0.71 * self.dy
-                else:
-                    self.incr_x = 0.0
-                    self.incr_y = 0.0
 
-            elif keyState['down']:
-                if keyState['left']:
+            elif key_state['down']:
+                if key_state['left']:
                     self.incr_x = -0.71 * self.dx
                     self.incr_y = 0.71 * self.dy
-                elif keyState['right']:
+                elif key_state['right']:
                     self.incr_x = 0.71 * self.dx
                     self.incr_y = 0.71 * self.dy
-                else:
-                    self.incr_x = 0.0
-                    self.incr_y = 0.0
-            else:
-                self.incr_x = 0.0
-                self.incr_y = 0.0
 
             self.Anim_scaled.play()
 
-        elif pressedKeys == 1:
-            if keyState['up']:
+        elif pressed_keys == 1:
+            if key_state['up']:
                 self.Anim_scaled = self.Animation_scaled['up']
                 self.incr_x = 0.0
                 self.incr_y = -self.dy
-            if keyState['down']:
+            if key_state['down']:
                 self.Anim_scaled = self.Animation_scaled['down']
                 self.incr_x = 0.0
                 self.incr_y = self.dy
-            elif keyState['left']:
+            elif key_state['left']:
                 self.Anim_scaled = self.Animation_scaled['left']
                 self.incr_x = -self.dx
                 self.incr_y = 0.0
-            elif keyState['right']:
+            elif key_state['right']:
                 self.Anim_scaled = self.Animation_scaled['right']
                 self.incr_x = self.dx
                 self.incr_y = 0.0
             self.Anim_scaled.play()
 
-        elif pressedKeys == 3:
-            if not keyState['up']:
+        elif pressed_keys == 3:
+            if not key_state['up']:
                 self.Anim_scaled = self.Animation_scaled['down']
                 self.incr_x = 0.0
                 self.incr_y = self.dy
-            elif not keyState['down']:
+            elif not key_state['down']:
                 self.Anim_scaled = self.Animation_scaled['up']
                 self.incr_x = 0.0
                 self.incr_y = -self.dy
-            elif not keyState['left']:
+            elif not key_state['left']:
                 self.Anim_scaled = self.Animation_scaled['right']
                 self.incr_x = self.dx
                 self.incr_y = 0.0
-            elif not keyState['right']:
+            elif not key_state['right']:
                 self.Anim_scaled = self.Animation_scaled['left']
                 self.incr_x = -self.dx
                 self.incr_y = 0.0
@@ -534,15 +526,18 @@ class MyPlayer(Inputs):
             self.incr_x = 0.0
             self.Anim_scaled.pause()
 
-        self.setX(round(self.x + self.dscale * self.incr_x))
-        self.setY(round(self.y + self.dscale * self.incr_y))
+        self.setX(round(self.x + self.incr_x))
+        self.setY(round(self.y + self.incr_y))
 
         # print(self.collision_width,self.collision_height)
         self.setCollisionX(self.x - self.x_offset)
         self.setCollisionY(self.y - self.y_offset)
+
         self.Anim_scaled.blit(surface, (self.x_scaled, self.y_scaled))
-        pygame.draw.rect(surface, (0, 0, 0), Rect(self.collision_x1, self.collision_y1,
-                                                  self.collision_width, self.collision_height))
+        # pygame.draw.rect(surface, (0, 0, 0), Rect(self.collision_x1, self.collision_y1,
+        #                                           self.collision_width, self.collision_height))
+        # self.set_incr_x(0)
+        # self.set_incr_y(0)
 
     def playAnim(self, surface, name):
         # self.Animation_scaled[name].play()#.blit(surface, (self.x_scaled, self.y_scaled))

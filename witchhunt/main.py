@@ -49,14 +49,10 @@ housey = 50
 
 windowSurface = pygame.display.set_mode((winx, winy), HWSURFACE | DOUBLEBUF | RESIZABLE, 32)
 pygame.display.set_caption('Witch Hunt')
-#
+
 # create dummy house object
-# house = pygame.image.load('./pics/buildings/haus1.png')
 
 # First try for using the sprite class
-house_obj = SpriteClass.MySprite('./pics/buildings/haus1.png', housex, housey)
-# house_obj
-# house_obj.
 
 sheetwidth = 6 * 64
 sheetheight = 2 * 40
@@ -106,8 +102,8 @@ player.setY(player_inity)
 
 player.set_hitbox_X(col_initx1)
 player.set_hitbox_Y(col_inity1)
-player.setCollisionWidth(hitbox_length)
-player.setCollisionHeight(hitbox_length)
+player.set_collision_width(hitbox_length)
+player.set_collision_height(hitbox_length)
 
 # print(player.collision_rect)
 # exit()
@@ -152,7 +148,7 @@ pygame.mixer.music.play(0)
 FPS = 30
 
 # pygame.key.set_repeat(100,1000)
-house_scaled = house_obj
+
 
 red = (100, 50, 50)
 grassgreen = (170, 244, 66)
@@ -203,10 +199,6 @@ while True:
                     # print(i)
                     # print(textures[tilemap[row][column]].image_rect)
 
-            house_scaled = house_obj
-            house_scaled.scaleValues(scalew, scaleh)
-
-            # print player.Animation_scaled
             # print(scalew,scaleh)
             player.setScale(scalew, scaleh)
             danny.setScale(scalew, scaleh)
@@ -242,7 +234,7 @@ while True:
     # print(Rect(col_initx1, col_inity1, 2 * hitbox_2, 2 * hitbox_2))
     danny.playAnim(windowSurface, "down")
 
-    player.move(event, windowSurface)
+    player.move(windowSurface, event)
     # print(player.x_scaled, player.y_scaled)
     # print("player " + str(player.collision_rect))
 

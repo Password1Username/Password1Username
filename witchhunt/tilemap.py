@@ -7,7 +7,6 @@ hedge = 4
 stone = 5
 block = 6
 
-
 #  '''Initialization of sprite objects'''
 grass_obj = SpriteClass.MySprite('./pics/terrain/grass-map-periodic.png')
 dirt_obj = SpriteClass.MySprite('./pics/terrain/dirt-map.png')
@@ -27,13 +26,12 @@ textures = {
 
 block_textures = {
     stone: stone_obj,
-    water: water_obj,
+    # water: water_obj,
     hedge: hedge_obj,
     block: block_obj}
 
-
-
 materials = {"grass": 0, "dirt": 1, "water": 3, "hedge": 4, "stone": 5, "block": 6}
+
 
 class Tilemap():
 
@@ -50,37 +48,68 @@ class Tilemap():
 
     def tilemap_one(self):
         tilemap = [
-            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["block"], materials["dirt"], materials["block"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+             materials["grass"], materials["block"], materials["dirt"], materials["block"], materials["grass"],
+             materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
              materials["grass"]],
-            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["dirt"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+             materials["grass"], materials["grass"], materials["dirt"], materials["grass"], materials["grass"],
+             materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
              materials["grass"]],
-            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["dirt"], materials["hedge"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+             materials["grass"], materials["grass"], materials["dirt"], materials["hedge"], materials["grass"],
+             materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
              materials["grass"]],
-            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["hedge"], materials["dirt"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+             materials["grass"], materials["hedge"], materials["dirt"], materials["grass"], materials["grass"],
+             materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
              materials["grass"]],
-            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["dirt"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+             materials["grass"], materials["grass"], materials["dirt"], materials["grass"], materials["grass"],
+             materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
              materials["grass"]],
-            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["dirt"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+             materials["grass"], materials["grass"], materials["dirt"], materials["grass"], materials["grass"],
+             materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
              materials["grass"]],
-            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["dirt"], materials["hedge"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+             materials["grass"], materials["grass"], materials["dirt"], materials["hedge"], materials["grass"],
+             materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
              materials["grass"]],
-            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["hedge"], materials["dirt"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+             materials["grass"], materials["hedge"], materials["dirt"], materials["grass"], materials["grass"],
+             materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
              materials["grass"]],
-            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["dirt"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+             materials["grass"], materials["grass"], materials["dirt"], materials["grass"], materials["grass"],
+             materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
              materials["grass"]],
-            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["dirt"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+             materials["grass"], materials["grass"], materials["dirt"], materials["grass"], materials["grass"],
+             materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
              materials["grass"]],
-            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["dirt"], materials["hedge"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+             materials["grass"], materials["grass"], materials["dirt"], materials["hedge"], materials["grass"],
+             materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
              materials["grass"]],
-            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["hedge"], materials["dirt"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+             materials["grass"], materials["hedge"], materials["dirt"], materials["grass"], materials["grass"],
+             materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
              materials["grass"]],
-            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["stone"], materials["water"], materials["water"], materials["water"], materials["stone"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+             materials["stone"], materials["water"], materials["water"], materials["water"], materials["stone"],
+             materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
              materials["grass"]],
-            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["stone"], materials["water"], materials["water"], materials["water"], materials["stone"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+             materials["stone"], materials["water"], materials["water"], materials["water"], materials["stone"],
+             materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
              materials["grass"]],
-            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["hedge"], materials["water"], materials["water"], materials["water"], materials["hedge"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+             materials["hedge"], materials["water"], materials["water"], materials["water"], materials["hedge"],
+             materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
              materials["grass"]],
-            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["hedge"], materials["hedge"], materials["hedge"], materials["hedge"], materials["hedge"], materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+            [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
+             materials["hedge"], materials["hedge"], materials["hedge"], materials["hedge"], materials["hedge"],
+             materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
              materials["grass"]]]
         return tilemap
-
