@@ -81,11 +81,11 @@ rects_right = [(spritex + 3 * spritewidth, spritey + spriteheight, spritewidth, 
 # playerAnim_scaled = playerAnim_down
 
 player = SpriteClass.MyPlayer(xpos=0.0, ypos=0.0)
-player.setAnimation('./pics/blueboy_64_40.png', rects_down, "down")
-player.setAnimation('./pics/blueboy_64_40.png', rects_up, "up")
-player.setAnimation('./pics/blueboy_64_40.png', rects_left, "left")
-player.setAnimation('./pics/blueboy_64_40.png', rects_right, "right")
-player.setInitAnimation("down")
+player.set_animation('./pics/blueboy_64_40.png', rects_down, "down")
+player.set_animation('./pics/blueboy_64_40.png', rects_up, "up")
+player.set_animation('./pics/blueboy_64_40.png', rects_left, "left")
+player.set_animation('./pics/blueboy_64_40.png', rects_right, "right")
+player.set_init_animation("down")
 
 player_initx = 0.0
 player_inity = 0.0
@@ -97,19 +97,19 @@ col_inity1 = 5
 
 
 
-player.setX(player_initx)
-player.setY(player_inity)
+player.set_x(player_initx)
+player.set_y(player_inity)
 
 player.set_hitbox_X(col_initx1)
-player.set_hitbox_Y(col_inity1)
+player.set_hitbox_y(col_inity1)
 player.set_collision_width(hitbox_length)
 player.set_collision_height(hitbox_length)
 
 # print(player.collision_rect)
 # exit()
 # print(player.x_scaled, player.y_scaled)
-player.setdx(dx)
-player.setdy(dy)
+player.set_dx(dx)
+player.set_dy(dy)
 
 danny = SpriteClass.MyPlayer(xpos=0, ypos=0)
 
@@ -118,10 +118,10 @@ rects_down_danny = [(spritex, spritey, spritewidth, spriteheight),
                     (spritex + 2 * spritewidth, spritey, spritewidth, spriteheight),
                     (spritex + 3 * spritewidth, spritey, spritewidth, spriteheight)]
 
-danny.setAnimation('./pics/people/danny_64_40.png', rects_down_danny, "down")
-danny.setInitAnimation("down")
-danny.setX(0.0)
-danny.setY(100.0)
+danny.set_animation('./pics/people/danny_64_40.png', rects_down_danny, "down")
+danny.set_init_animation("down")
+danny.set_x(0.0)
+danny.set_y(100.0)
 # print(danny.x_scaled, danny.y_scaled)
 
 
@@ -161,8 +161,8 @@ current_game_map_textures = tilemap.textures
 
 for row in range(0, nheight):
     for column in range(0, nwidth):
-        current_game_map_textures[current_game_map[row][column]].setX(round(column * tilewidth))
-        current_game_map_textures[current_game_map[row][column]].setY(round(row * tileheight))
+        current_game_map_textures[current_game_map[row][column]].set_x(round(column * tilewidth))
+        current_game_map_textures[current_game_map[row][column]].set_y(round(row * tileheight))
 
 while True:
     windowSurface.fill(grassgreen)
@@ -192,19 +192,19 @@ while True:
 
             for row in range(0, nheight):
                 for column in range(0, nwidth):
-                    current_game_map_textures[current_game_map[row][column]].setX(column * tilewidth_scaled)
-                    current_game_map_textures[current_game_map[row][column]].setY(row * tileheight_scaled)
-                    current_game_map_textures[current_game_map[row][column]].scaleValues(scalew, scaleh)
+                    current_game_map_textures[current_game_map[row][column]].set_x(column * tilewidth_scaled)
+                    current_game_map_textures[current_game_map[row][column]].set_y(row * tileheight_scaled)
+                    current_game_map_textures[current_game_map[row][column]].scale_values(scalew, scaleh)
                     # i+=1
                     # print(i)
                     # print(textures[tilemap[row][column]].image_rect)
 
             # print(scalew,scaleh)
-            player.setScale(scalew, scaleh)
-            danny.setScale(scalew, scaleh)
+            player.set_scale(scalew, scaleh)
+            danny.set_scale(scalew, scaleh)
             # danny.scaleValues()
-            # danny.playAnim"down"]
-            # danny.move(event, windowSurface)
+            # danny.play_animation"down"]
+            # danny.arrow_key_animation_motion(event, windowSurface)
 
     # '''Inter'''
     for row in range(0, nheight):
@@ -213,8 +213,8 @@ while True:
             # print(tilemap[row][column])
             # print(block_obj.getCollision(house_obj))
             current_tile = current_game_map[row][column]
-            current_game_map_textures[current_tile].setX(round(column * tilewidth_scaled))
-            current_game_map_textures[current_tile].setY(round(row * tileheight_scaled))
+            current_game_map_textures[current_tile].set_x(round(column * tilewidth_scaled))
+            current_game_map_textures[current_tile].set_y(round(row * tileheight_scaled))
             # print(round(column * tilewidth_scaled),round(row * tileheight_scaled))
             current_game_map_textures[current_game_map[row][column]].image_rect = (
                 round(column * tilewidth_scaled), round(row * tileheight_scaled), m.ceil(tilewidth_scaled),
@@ -223,8 +223,8 @@ while True:
             windowSurface.blit(current_game_map_textures[current_tile].image_obj, current_game_map_textures[current_tile].image_rect)
 
             if current_tile in tilemap.block_textures:
-                current_game_map_textures[current_tile].setCollisionX(round(column * tilewidth_scaled))
-                current_game_map_textures[current_tile].setCollisionY(round(row * tileheight_scaled))
+                current_game_map_textures[current_tile].set_collision_x(round(column * tilewidth_scaled))
+                current_game_map_textures[current_tile].set_collision_y(round(row * tileheight_scaled))
                 # pygame.draw.rect(windowSurface, (0, 0, 0), Rect(textures[current_tile].collision_x1,
                 # textures[current_tile].collision_y1, textures[current_tile].collision_width,
                 #                                           textures[current_tile].collision_height))
@@ -232,9 +232,9 @@ while True:
 
     # pygame.draw.rect(windowSurface, (0,0,0), Rect(player.col, col_inity1,2*hitbox_2,2*hitbox_2))
     # print(Rect(col_initx1, col_inity1, 2 * hitbox_2, 2 * hitbox_2))
-    danny.playAnim(windowSurface, "down")
+    danny.play_animation(windowSurface, "down")
 
-    player.move(windowSurface, event)
+    player.arrow_key_animation_motion(windowSurface, event)
     # print(player.x_scaled, player.y_scaled)
     # print("player " + str(player.collision_rect))
 
