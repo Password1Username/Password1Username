@@ -8,10 +8,24 @@ pygame.init()
 # '''Inputs: https://stackoverflow.com/questions/15652459/pygame-arrow-control'''
 #
 #
+
+
 class Input:
     def __init__(self):
         self.inputName = None
         self.timeSinceInput = None
+
+
+class InputBuffer:
+
+    def __init__(self):
+        self.buffer_length = 10
+        self.buffer_list = []
+
+    def push(self, buffer_input):
+        if len(self.buffer_list) > self.buffer_length:
+            self.buffer_list.pop(0)
+        self.buffer_list.append(buffer_input)
 
 
 class Inputs:
@@ -42,7 +56,7 @@ class Inputs:
                            "pause": False}
         self.keyState = {key: self.inputState[key] for key in ("up", "down", "right", "left") if key in self.inputState}
 
-    # self.buffer = InputBuffer()
+        self.buffer = InputBuffer()
 
     def lookupBinding(self, keyEntered):
         for binding, keyBound in self.bindings.items():
@@ -59,7 +73,7 @@ class Inputs:
                 newInput = Input()
                 newInput.inputName = binding
                 newInput.timeSinceInput = 0
-                # self.buffer.push(newInput)
+                self.buffer.push(newInput)
                 self.inputState[binding] = True
 
         if event.type == pygame.KEYUP:
@@ -91,7 +105,7 @@ class Inputs:
 '''Class storing parameters'''
 
 
-class MyObject():
+class MyObject:
     ''' The constructor of class '''
 
     def __init__(self, xpos=0.0, ypos=0.0):
@@ -241,7 +255,7 @@ def intersect_with(rect_a, rect_b):
 class MyPlayer(Inputs):
 
     def __init__(self, xpos=0.0, ypos=0.0):
-        # super().__init__(self,xpos=None, ypos=None)
+        # super(Inputs, self).__init__()
         super().__init__()
 
         self.scaleinx = 1.0
@@ -303,6 +317,10 @@ class MyPlayer(Inputs):
 
         self.collision_center_x_scaled = self.x_scaled + 0.5 * self.width_scaled
         self.collision_center_y_scaled = self.y_scaled + 0.5 * self.height_scaled
+
+    """Getter functions"""
+    def get_buffer(self):
+        return self.buffer
 
     """Setter functions"""
 
@@ -414,41 +432,50 @@ class MyPlayer(Inputs):
         value = intersect_with(anim_collision_rect, sprite_collision_rect)
 
         if value == 1:
-            if self.incr_x != 0:
+            if self.incr_x > 0:
                 # Moving right; Hit the left side of the tile
-                if anim_collision_rect.right + self.incr_x > sprite_collision_rect.left > anim_collision_rect.left:
+                #
 
-                    self.set_x(sprite_collision_rect.left - self.width + abs(self.x_offset))
-                    # print(self.x_offset)
-                    self.set_collision_x(self.x - self.x_offset)
+                self.set_x(sprite_collision_rect.left - self.width + abs(self.x_offset))
+                # print(self.x_offset)
 
+            if self.incr_x < 0:
                 # Moving left; Hit the right side of the tile
-                elif self.collision_x1 < sprite_collision_rect.right < anim_collision_rect.right + self.incr_x:
+                # if self.collision_x1 < sprite_collision_rect.right < anim_collision_rect.right + self.incr_x:
+                self.set_x(sprite_collision_rect.right - abs(self.x_offset))
 
-                    self.set_x(sprite_collision_rect.right - abs(self.x_offset))
-                    self.set_collision_x(self.x - self.x_offset)
-            if self.incr_y != 0:
+            self.incr_x = 0
+            self.set_collision_x(self.x - self.x_offset)
+
+        value = intersect_with(anim_collision_rect, sprite_collision_rect)
+        if value == 1:
+            if self.incr_y > 0:
                 # Moving down; Hit the top side of the tile
-                if anim_collision_rect.bottom + self.incr_y > sprite_collision_rect.top > anim_collision_rect.top:
+                # if anim_collision_rect.bottom + self.incr_y > sprite_collision_rect.top > anim_collision_rect.top:
 
-                    # self.x_offset = self.x - self.collision_x1
-                    # self.y_offset = self.y - self.collision_y1
+                # self.x_offset = self.x - self.collision_x1
+                # self.y_offset = self.y - self.collision_y1
 
-                    self.set_y(collision_object.collision_y1 - self.height + abs(self.y_offset))
-                    self.set_collision_y(self.y - self.y_offset)
+                self.set_y(collision_object.collision_y1 - self.height + abs(self.y_offset))
 
+            if self.incr_y < 0:
                 # Moving up; Hit the bottom side of the tile
-                elif anim_collision_rect.bottom > sprite_collision_rect.bottom > self.collision_y1 + self.incr_y:
+                # elif anim_collision_rect.bottom > sprite_collision_rect.bottom > self.collision_y1 + self.incr_y:
+                self.set_y(sprite_collision_rect.bottom - abs(self.y_offset))
 
-                    self.set_y(sprite_collision_rect.bottom - abs(self.y_offset))
-                    self.set_collision_y(self.y - self.y_offset)
+            self.incr_y = 0
+            self.set_collision_y(self.y - self.y_offset)
 
-        return value
+
 
     def arrow_key_animation_motion(self, surface, event):
         """ This method is used to map keyboard arrow inputs to the animations and their position """
-        key_state = super().getKeyState(event)
+
+        key_state = super().getInputState(event)
         # print(inputState)
+        # if self.get_buffer().buffer_list:
+        #     print(self.get_buffer().buffer_list[-1].inputName)
+
         pressed_keys = sum(key_state.values())
         # print(pressed_keys)
 
@@ -480,7 +507,7 @@ class MyPlayer(Inputs):
                 self.Anim_scaled = self.Animation_scaled['up']
                 self.incr_x = 0.0
                 self.incr_y = -self.dy
-            if key_state['down']:
+            elif key_state['down']:
                 self.Anim_scaled = self.Animation_scaled['down']
                 self.incr_x = 0.0
                 self.incr_y = self.dy
