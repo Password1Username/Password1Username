@@ -483,65 +483,25 @@ class MyPlayer(Inputs):
         self.incr_x = 0
         self.incr_y = 0
 
-        if pressed_keys == 2:
-            if key_state['up']:
-                if key_state['left']:
-                    self.incr_x = -0.71 * self.dx
-                    self.incr_y = -0.71 * self.dy
-                elif key_state['right']:
-                    self.incr_x = 0.71 * self.dx
-                    self.incr_y = -0.71 * self.dy
+        if key_state['left']:
+            self.Anim_scaled = self.Animation_scaled['left']
+            self.incr_x -= self.dx
+        if key_state['right']:
+            self.Anim_scaled = self.Animation_scaled['right']
+            self.incr_x += self.dx
+        if key_state['up']:
+            self.Anim_scaled = self.Animation_scaled['up']
+            self.incr_y -= self.dy
+        if key_state['down']:
+            self.Anim_scaled = self.Animation_scaled['down']
+            self.incr_y += self.dy
 
-            elif key_state['down']:
-                if key_state['left']:
-                    self.incr_x = -0.71 * self.dx
-                    self.incr_y = 0.71 * self.dy
-                elif key_state['right']:
-                    self.incr_x = 0.71 * self.dx
-                    self.incr_y = 0.71 * self.dy
-
+        if self.incr_x != 0 or self.incr_y != 0:
             self.Anim_scaled.play()
-
-        elif pressed_keys == 1:
-            if key_state['up']:
-                self.Anim_scaled = self.Animation_scaled['up']
-                self.incr_x = 0.0
-                self.incr_y = -self.dy
-            elif key_state['down']:
-                self.Anim_scaled = self.Animation_scaled['down']
-                self.incr_x = 0.0
-                self.incr_y = self.dy
-            elif key_state['left']:
-                self.Anim_scaled = self.Animation_scaled['left']
-                self.incr_x = -self.dx
-                self.incr_y = 0.0
-            elif key_state['right']:
-                self.Anim_scaled = self.Animation_scaled['right']
-                self.incr_x = self.dx
-                self.incr_y = 0.0
-            self.Anim_scaled.play()
-
-        elif pressed_keys == 3:
-            if not key_state['up']:
-                self.Anim_scaled = self.Animation_scaled['down']
-                self.incr_x = 0.0
-                self.incr_y = self.dy
-            elif not key_state['down']:
-                self.Anim_scaled = self.Animation_scaled['up']
-                self.incr_x = 0.0
-                self.incr_y = -self.dy
-            elif not key_state['left']:
-                self.Anim_scaled = self.Animation_scaled['right']
-                self.incr_x = self.dx
-                self.incr_y = 0.0
-            elif not key_state['right']:
-                self.Anim_scaled = self.Animation_scaled['left']
-                self.incr_x = -self.dx
-                self.incr_y = 0.0
-            self.Anim_scaled.play()
+            if self.incr_x != 0 and self.incr_y != 0:
+                self.incr_x *= 0.7071
+                self.incr_y *= 0.7071
         else:
-            self.incr_y = 0.0
-            self.incr_x = 0.0
             self.Anim_scaled.pause()
 
         self.set_x(round(self.x + self.incr_x))
