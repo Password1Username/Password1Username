@@ -476,7 +476,7 @@ class MyPlayer(Inputs):
         # if self.get_buffer().buffer_list:
         #     print(self.get_buffer().buffer_list[-1].inputName)
 
-        pressed_keys = sum(key_state.values())
+        # pressed_keys = sum(key_state.values())
         # print(pressed_keys)
 
         # '''Efficient way to implement keys with minimal'''
