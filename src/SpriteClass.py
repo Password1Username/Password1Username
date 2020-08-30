@@ -73,6 +73,7 @@ class Inputs:
                            "hk": False,
                            "pause": False}
         self.keyState = {key: self.inputState[key] for key in ("up", "down", "right", "left") if key in self.inputState}
+
         self.buffer = InputBuffer()
 
     def lookup_binding(self, key_entered):
@@ -113,6 +114,7 @@ class Inputs:
                     new_input = Input()
                     new_input.input_name = binding
                     new_input.time_since_input = 0
+                    self.buffer.push(new_input)
                     self.keyState[binding] = True
 
             if current_event.type == pygame.KEYUP:
@@ -121,6 +123,9 @@ class Inputs:
                     self.keyState[binding] = False
         self.buffer.flush()
         return self.keyState
+
+    def get_buffer_list(self):
+        return self.buffer.buffer_list
 
 
 # '''Class storing parameters'''
@@ -264,6 +269,8 @@ class MyPlayer(Inputs):
     def __init__(self, xpos=0.0, ypos=0.0):
         # super(Inputs, self).__init__()
         super().__init__()
+
+        self.motion = False
 
         self.scaleinx = 1.0
         self.scaleiny = 1.0
@@ -437,14 +444,10 @@ class MyPlayer(Inputs):
         if value == 1:
             if self.incr_x > 0:
                 # Moving right; Hit the left side of the tile
-                #
-
                 self.set_x(sprite_collision_rect.left - self.width + abs(self.x_offset))
-                # print(self.x_offset)
 
             if self.incr_x < 0:
                 # Moving left; Hit the right side of the tile
-                # if self.collision_x1 < sprite_collision_rect.right < anim_collision_rect.right + self.incr_x:
                 self.set_x(sprite_collision_rect.right - abs(self.x_offset))
 
             self.incr_x = 0
@@ -454,48 +457,49 @@ class MyPlayer(Inputs):
         if value == 1:
             if self.incr_y > 0:
                 # Moving down; Hit the top side of the tile
-                # if anim_collision_rect.bottom + self.incr_y > sprite_collision_rect.top > anim_collision_rect.top:
-
-                # self.x_offset = self.x - self.collision_x1
-                # self.y_offset = self.y - self.collision_y1
-
                 self.set_y(collision_object.collision_y1 - self.height + abs(self.y_offset))
 
             if self.incr_y < 0:
                 # Moving up; Hit the bottom side of the tile
-                # elif anim_collision_rect.bottom > sprite_collision_rect.bottom > self.collision_y1 + self.incr_y:
                 self.set_y(sprite_collision_rect.bottom - abs(self.y_offset))
 
             self.incr_y = 0
             self.set_collision_y(self.y - self.y_offset)
 
     def arrow_key_animation_motion(self, surface, events):
-        """ This method is used to map keyboard arrow inputs to the animations and their position """
+        # """ This method is used to map keyboard arrow inputs to the animations and their position """
 
-        key_state = super().get_input_state(events)
+        key_state = super().get_key_state(events)
+        key_buffer_list = [buffer_element.input_name for buffer_element in super().get_buffer_list()]
+        print(key_buffer_list)
 
+        self.motion = False
         self.incr_x = 0
         self.incr_y = 0
 
-        if key_state['left']:
-            self.Anim_scaled = self.Animation_scaled['left']
-            self.incr_x -= self.dx
         if key_state['right']:
-            self.Anim_scaled = self.Animation_scaled['right']
+            self.motion = True
             self.incr_x += self.dx
+        if key_state['left']:
+            self.motion = True
+            self.incr_x -= self.dx
         if key_state['up']:
-            self.Anim_scaled = self.Animation_scaled['up']
+            self.motion = True
             self.incr_y -= self.dy
         if key_state['down']:
-            self.Anim_scaled = self.Animation_scaled['down']
+            self.motion = True
             self.incr_y += self.dy
 
-        if self.incr_x != 0 or self.incr_y != 0:
-            self.Anim_scaled.play()
+        if self.motion:
             if self.incr_x != 0 and self.incr_y != 0:
                 self.incr_x *= 0.7071
                 self.incr_y *= 0.7071
-        else:
+
+            if key_buffer_list:
+                self.Anim_scaled = self.Animation_scaled[key_buffer_list[-1]]
+                self.Anim_scaled.play()
+
+        elif not self.motion:
             self.Anim_scaled.pause()
 
         self.set_x(round(self.x + self.incr_x))
