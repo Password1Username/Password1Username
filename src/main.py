@@ -12,8 +12,19 @@ import SpriteClass
 import tilemap
 
 sys.path.append(os.path.abspath('..'))
+os.environ['SDL_VIDEODRIVER']='windlib'
+# pygame.display.list_modes()
 
+# Set up: https://docs.w3cub.com/pygame/ref/mixer/
+# https://xszz.org/faq-1/question-2018090534515.html
+pygame.mixer.init(44100, -16, 2, 2048)
 pygame.init()
+
+# '''Music'''
+pygame.mixer.music.load('./music/witch-hunt.wav')
+# pygame.mixer.music.load('./music/intro.wav')
+pygame.mixer.music.play(0)
+
 
 '''Tile map dimensions'''
 nwidth = 16
@@ -78,7 +89,6 @@ rects_right = [(spritex + 3 * spritewidth, spritey + spriteheight, spritewidth, 
                (spritex + 4 * spritewidth, spritey + spriteheight, spritewidth, spriteheight),
                (spritex + 5 * spritewidth, spritey + spriteheight, spritewidth, spriteheight)]
 
-# playerAnim_scaled = playerAnim_down
 
 player = SpriteClass.MyPlayer(xpos=0.0, ypos=0.0)
 player.set_animation('./pics/blueboy_64_40.png', rects_down, "down")
@@ -95,8 +105,6 @@ hitbox_length = 28
 col_initx1 = 18
 col_inity1 = 5
 
-
-
 player.set_x(player_initx)
 player.set_y(player_inity)
 
@@ -105,9 +113,6 @@ player.set_hitbox_y(col_inity1)
 player.set_collision_width(hitbox_length)
 player.set_collision_height(hitbox_length)
 
-# print(player.collision_rect)
-# exit()
-# print(player.x_scaled, player.y_scaled)
 player.set_dx(dx)
 player.set_dy(dy)
 
@@ -122,12 +127,9 @@ danny.set_animation('./pics/people/danny_64_40.png', rects_down_danny, "down")
 danny.set_init_animation("down")
 danny.set_x(0.0)
 danny.set_y(100.0)
-# print(danny.x_scaled, danny.y_scaled)
 
 
-"""Used to scale objects."""
-
-
+# """Used to scale objects."""
 def scaled_variable(variable, scale):
     return scale * variable
 
@@ -140,10 +142,6 @@ def scaled_anim_object(ref_object, image_w, image_h, scale_w, scale_h):
 
 #
 mainClock = pygame.time.Clock()
-'''Music'''
-pygame.mixer.music.load('./music/witch-hunt.wav')
-# pygame.mixer.music.load('./music/intro.wav')
-pygame.mixer.music.play(0)
 
 FPS = 30
 
@@ -168,7 +166,11 @@ while True:
     windowSurface.fill(grassgreen)
     # scaleh=1.0
     # scalew=1.0
-    for event in pygame.event.get():
+    pygame.event.pump()
+
+    current_events = pygame.event.get()
+
+    for event in current_events:
         if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
             pygame.quit()
             sys.exit()
@@ -195,48 +197,29 @@ while True:
                     current_game_map_textures[current_game_map[row][column]].set_x(column * tilewidth_scaled)
                     current_game_map_textures[current_game_map[row][column]].set_y(row * tileheight_scaled)
                     current_game_map_textures[current_game_map[row][column]].scale_values(scalew, scaleh)
-                    # i+=1
-                    # print(i)
-                    # print(textures[tilemap[row][column]].image_rect)
 
-            # print(scalew,scaleh)
             player.set_scale(scalew, scaleh)
             danny.set_scale(scalew, scaleh)
-            # danny.scaleValues()
-            # danny.play_animation"down"]
-            # danny.arrow_key_animation_motion(event, windowSurface)
 
-    # '''Inter'''
+    # '''Tile map collision detection'''
     for row in range(0, nheight):
         for column in range(0, nwidth):
-            # print str(row)+","+str(column)
-            # print(tilemap[row][column])
-            # print(block_obj.getCollision(house_obj))
+
             current_tile = current_game_map[row][column]
             current_game_map_textures[current_tile].set_x(round(column * tilewidth_scaled))
             current_game_map_textures[current_tile].set_y(round(row * tileheight_scaled))
-            # print(round(column * tilewidth_scaled),round(row * tileheight_scaled))
             current_game_map_textures[current_game_map[row][column]].image_rect = (
                 round(column * tilewidth_scaled), round(row * tileheight_scaled), m.ceil(tilewidth_scaled),
                 m.ceil(tileheight_scaled))
-            # print(textures[tilemap[row][column]].image_rect)
             windowSurface.blit(current_game_map_textures[current_tile].image_obj, current_game_map_textures[current_tile].image_rect)
 
             if current_tile in tilemap.block_textures:
                 current_game_map_textures[current_tile].set_collision_x(round(column * tilewidth_scaled))
                 current_game_map_textures[current_tile].set_collision_y(round(row * tileheight_scaled))
-                # pygame.draw.rect(windowSurface, (0, 0, 0), Rect(textures[current_tile].collision_x1,
-                # textures[current_tile].collision_y1, textures[current_tile].collision_width,
-                #                                           textures[current_tile].collision_height))
                 player.collision_with(current_game_map_textures[current_tile])
 
-    # pygame.draw.rect(windowSurface, (0,0,0), Rect(player.col, col_inity1,2*hitbox_2,2*hitbox_2))
-    # print(Rect(col_initx1, col_inity1, 2 * hitbox_2, 2 * hitbox_2))
     danny.play_animation(windowSurface, "down")
-
-    player.arrow_key_animation_motion(windowSurface, event)
-    # print(player.x_scaled, player.y_scaled)
-    # print("player " + str(player.collision_rect))
-
+    player.arrow_key_animation_motion(windowSurface, current_events)
     pygame.display.update()
+
     mainClock.tick(FPS)

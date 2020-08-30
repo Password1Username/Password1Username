@@ -5,26 +5,44 @@ import pyganim
 pygame.init()
 
 
-# '''Inputs: https://stackoverflow.com/questions/15652459/pygame-arrow-control'''
-#
-#
-
-
+# '''Smooth control inputs: https://stackoverflow.com/questions/15652459/pygame-arrow-control'''
 class Input:
     def __init__(self):
-        self.inputName = None
-        self.timeSinceInput = None
+        self.input_name = None
+        self.time_since_input = 0.0
 
 
 class InputBuffer:
 
     def __init__(self):
-        self.buffer_length = 10
+        self.buffer_max_length = 10
         self.buffer_list = []
+        self.t_last_frame = 0
+        self.t_current_frame = 0
+        self.t_input_delay = 0.5
+        self.time_elapsed = 0
+
+    def update_time(self):
+        self.t_last_frame = self.t_current_frame
+        self.t_current_frame = pygame.time.get_ticks()
+        self.time_elapsed = (self.t_current_frame - self.t_last_frame) / 1000.0
+        for buffer_item in self.buffer_list:
+            buffer_item.time_since_input += self.time_elapsed
+
+    # This method removes old entries in input buffer
+    def flush(self):
+
+        if self.buffer_list:
+            for idx in range(0, len(self.buffer_list)):
+                if self.buffer_list[idx].time_since_input > self.t_input_delay:
+                    self.buffer_list.pop(idx)
+                if len(self.buffer_list) > self.buffer_max_length:
+                    self.buffer_list.pop(idx)
+                else:
+                    return self.buffer_list
+        return self.buffer_list
 
     def push(self, buffer_input):
-        if len(self.buffer_list) > self.buffer_length:
-            self.buffer_list.pop(0)
         self.buffer_list.append(buffer_input)
 
 
@@ -55,61 +73,61 @@ class Inputs:
                            "hk": False,
                            "pause": False}
         self.keyState = {key: self.inputState[key] for key in ("up", "down", "right", "left") if key in self.inputState}
-
         self.buffer = InputBuffer()
 
-    def lookupBinding(self, keyEntered):
-        for binding, keyBound in self.bindings.items():
-            if keyEntered == keyBound:
+    def lookup_binding(self, key_entered):
+        for binding, key_bound in self.bindings.items():
+            if key_entered == key_bound:
                 return binding
 
         return "not found"
 
-    def getInputState(self, event):
+    def get_input_state(self, events):
 
-        if event.type == pygame.KEYDOWN:
-            binding = self.lookupBinding(event.key)
-            if binding != "not found":
-                newInput = Input()
-                newInput.inputName = binding
-                newInput.timeSinceInput = 0
-                self.buffer.push(newInput)
-                self.inputState[binding] = True
+        self.buffer.update_time()
+        for current_event in events:
+            if current_event.type == pygame.KEYDOWN:
+                binding = self.lookup_binding(current_event.key)
 
-        if event.type == pygame.KEYUP:
-            binding = self.lookupBinding(event.key)
-            if binding != "not found":
-                self.inputState[binding] = False
+                if binding != "not found":
+                    new_input = Input()
+                    new_input.input_name = binding
+                    new_input.time_since_input = 0
+                    self.buffer.push(new_input)
+                    self.inputState[binding] = True
 
+            if current_event.type == pygame.KEYUP:
+                binding = self.lookup_binding(current_event.key)
+                if binding != "not found":
+                    self.inputState[binding] = False
+        self.buffer.flush()
         return self.inputState
 
-    def getKeyState(self, event):
+    def get_key_state(self, events):
 
-        if event.type == pygame.KEYDOWN:
-            binding = self.lookupBinding(event.key)
-            if binding != "not found":
-                newInput = Input()
-                newInput.inputName = binding
-                newInput.timeSinceInput = 0
-                # self.buffer.push(newInput)
-                self.keyState[binding] = True
+        self.buffer.update_time()
+        for current_event in events:
+            if current_event.type == pygame.KEYDOWN:
+                binding = self.lookup_binding(current_event.key)
+                if binding != "not found":
+                    new_input = Input()
+                    new_input.input_name = binding
+                    new_input.time_since_input = 0
+                    self.keyState[binding] = True
 
-        if event.type == pygame.KEYUP:
-            binding = self.lookupBinding(event.key)
-            if binding != "not found":
-                self.keyState[binding] = False
-
+            if current_event.type == pygame.KEYUP:
+                binding = self.lookup_binding(current_event.key)
+                if binding != "not found":
+                    self.keyState[binding] = False
+        self.buffer.flush()
         return self.keyState
 
 
-'''Class storing parameters'''
-
-
+# '''Class storing parameters'''
 class MyObject:
-    ''' The constructor of class '''
-
+    # ''' The initializer of class '''
     def __init__(self, xpos=0.0, ypos=0.0):
-        '''Scaling factors'''
+        # '''Scaling factors'''
         self.scaleinx = 1.0
         self.scaleiny = 1.0
 
@@ -138,8 +156,8 @@ class MyObject:
 
 # MySprite Class
 class MySprite(MyObject):
-    # ''' The constructor of class '''
 
+    # ''' The initializer of class '''
     def __init__(self, imagePath):
         super().__init__()
         # ''' Load image object '''
@@ -153,7 +171,6 @@ class MySprite(MyObject):
         self.image_rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
         # Set all image values
-        # self.getImageValues()
         self.collision_width = self.width
         self.collision_height = self.height
 
@@ -163,9 +180,6 @@ class MySprite(MyObject):
         # '''Scaled quantities'''
         self.width_scaled = self.width * self.scaleinx
         self.height_scaled = self.height * self.scaleiny
-
-        # print(self.width)
-        # exit()
 
         self.collision_width_scaled = self.width_scaled
         self.collision_height_scaled = self.height_scaled
@@ -196,17 +210,13 @@ class MySprite(MyObject):
                                      self.collision_width, self.collision_height)
 
         if collision_rect.colliderect(sprite.collision_rect):
-            # print(sprite.collision_rect)
-            # print(self.collision_rect)
             print("Collision detected")
-        # print(sprite)
-
         else:
             print("No collision detected")
         return self.collision_rect.colliderect(sprite.image_rect)
 
     def scale_values(self, scale_w, scale_h):
-        # self.image_rect = scalew*self.image_obj.get_rect()
+
         self.scaleinx = scale_w
         self.scaleiny = scale_h
         self.x_scaled = int(self.scaleinx * self.x)
@@ -216,17 +226,14 @@ class MySprite(MyObject):
         self.image_rect = pygame.Rect(self.x_scaled, self.y_scaled, self.width_scaled, self.height_scaled)
         self.image_obj = pygame.transform.scale(self.image_obj_original, (self.width_scaled, self.height_scaled))
 
-        '''Collision parameters'''
+        # '''Collision parameters'''
         self.collision_x1_scaled = int(self.scaleinx * self.collision_x1)
         self.collision_y1_scaled = int(self.scaleiny * self.collision_y1)
         self.collision_width_scaled = int(self.scaleinx * self.collision_width)
         self.collision_height_scaled = int(self.scaleiny * self.collision_height)
-        # print(self.collision_x1_scaled, self.collision_y1_scaled,self.collision_width_scaled, self.collision_height_scaled)
-        # print( "rect",pygame.Rect(self.collision_x1_scaled, self.collision_y1_scaled,self.collision_width_scaled, self.collision_height_scaled))
-        # exit()
         self.collision_rect_scaled = pygame.Rect(self.collision_x1_scaled, self.collision_y1_scaled,
                                                  self.collision_width_scaled, self.collision_height_scaled)
-        # print(rect ,self.collision_rect_scaled)
+
 
     def set_x(self, val_x):
         self.x = val_x
@@ -319,6 +326,7 @@ class MyPlayer(Inputs):
         self.collision_center_y_scaled = self.y_scaled + 0.5 * self.height_scaled
 
     """Getter functions"""
+
     def get_buffer(self):
         return self.buffer
 
@@ -336,7 +344,6 @@ class MyPlayer(Inputs):
     def set_scale(self, scalew, scaleh):
         self.scaleinx = scalew
         self.scaleiny = scaleh
-        # print(self.scaleinx, self.scaleiny)
 
     def set_collision_x(self, collision_x1):
         self.collision_x1 = collision_x1
@@ -382,7 +389,6 @@ class MyPlayer(Inputs):
         self.Anim_scaled = self.Animation_scaled[name]
 
     def set_animation(self, sprite_sheet, frames, name):
-        # print frames
 
         self.x = frames[0][2]
         self.x_scaled = frames[0][2] * self.scaleinx
@@ -421,9 +427,6 @@ class MyPlayer(Inputs):
                 self.Anim_scaled = self.Animation_scaled[name]
 
     def collision_with(self, collision_object):
-        # print("player " + str(self.collision_rect))
-        # print("player " + str(self.collision_rect), "sprite " + str(sprite.collision_rect))
-        # print(self.collision_rect)
         anim_collision_rect = pygame.Rect(self.collision_x1, self.collision_y1, self.collision_width,
                                           self.collision_height)
         sprite_collision_rect = pygame.Rect(collision_object.collision_x1, collision_object.collision_y1,
@@ -466,20 +469,11 @@ class MyPlayer(Inputs):
             self.incr_y = 0
             self.set_collision_y(self.y - self.y_offset)
 
-
-
-    def arrow_key_animation_motion(self, surface, event):
+    def arrow_key_animation_motion(self, surface, events):
         """ This method is used to map keyboard arrow inputs to the animations and their position """
 
-        key_state = super().getInputState(event)
-        # print(inputState)
-        # if self.get_buffer().buffer_list:
-        #     print(self.get_buffer().buffer_list[-1].inputName)
+        key_state = super().get_input_state(events)
 
-        # pressed_keys = sum(key_state.values())
-        # print(pressed_keys)
-
-        # '''Efficient way to implement keys with minimal'''
         self.incr_x = 0
         self.incr_y = 0
 
@@ -507,22 +501,12 @@ class MyPlayer(Inputs):
         self.set_x(round(self.x + self.incr_x))
         self.set_y(round(self.y + self.incr_y))
 
-        # print(self.collision_width,self.collision_height)
         self.set_collision_x(self.x - self.x_offset)
         self.set_collision_y(self.y - self.y_offset)
-
         self.Anim_scaled.blit(surface, (self.x_scaled, self.y_scaled))
-        # pygame.draw.rect(surface, (0, 0, 0), Rect(self.collision_x1, self.collision_y1,
-        #                                           self.collision_width, self.collision_height))
-        # self.set_incr_x(0)
-        # self.set_incr_y(0)
 
     def play_animation(self, surface, name):
-        # self.Animation_scaled[name].play()#.blit(surface, (self.x_scaled, self.y_scaled))
-        # if self.Animation_scaled[name]:
-        # print ("Animation exists.")
-        # if not self.Animation_scaled[name].play():
+
         self.Anim_scaled = self.Animation_scaled[name]
         self.Anim_scaled.play()
-        # print(self.x_scaled, self.y_scaled)
         self.Anim_scaled.blit(surface, (self.x_scaled, self.y_scaled))
