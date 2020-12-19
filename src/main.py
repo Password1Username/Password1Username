@@ -21,8 +21,9 @@ pygame.mixer.init(44100, -16, 2, 2048)
 pygame.init()
 
 # '''Music'''
-pygame.mixer.music.load('./music/witch-hunt.wav')
 # pygame.mixer.music.load('./music/intro.wav')
+
+pygame.mixer.music.load('./music/witch-hunt.wav')
 pygame.mixer.music.play(0)
 
 
@@ -108,7 +109,7 @@ col_inity1 = 5
 player.set_x(player_initx)
 player.set_y(player_inity)
 
-player.set_hitbox_X(col_initx1)
+player.set_hitbox_x(col_initx1)
 player.set_hitbox_y(col_inity1)
 player.set_collision_width(hitbox_length)
 player.set_collision_height(hitbox_length)
