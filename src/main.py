@@ -109,8 +109,8 @@ col_inity1 = 5
 player.set_x(player_initx)
 player.set_y(player_inity)
 
-player.set_hitbox_x(col_initx1)
-player.set_hitbox_y(col_inity1)
+player.set_hit_box_x(col_initx1)
+player.set_hit_box_y(col_inity1)
 player.set_collision_width(hitbox_length)
 player.set_collision_height(hitbox_length)
 
