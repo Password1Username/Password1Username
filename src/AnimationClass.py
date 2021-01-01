@@ -17,10 +17,10 @@ class MyPlayer(InputClass.Inputs):
         self.scale_in_x = 1.0
         self.scale_in_y = 1.0
 
-        self.Animation = {}
-        self.Animation_scaled = {}
-        self.Anim_scaled = None
-        self.Anim = None
+        self.animations = {}
+        self.animations_scaled = {}
+        self.current_animation = None
+        self.current_animation_scaled = None
 
         # Case: x_pos passed into constructor
         if x_pos:
@@ -110,30 +110,52 @@ class MyPlayer(InputClass.Inputs):
     def get_y_prev(self):
         return self.y_prev
 
+    def get_scale_in_x(self):
+        return self.scale_in_x
+
+    def get_scale_in_y(self):
+        return self.scale_in_y
+
+    def get_width_scaled(self):
+        return self.width_scaled
+
+    def get_height_scaled(self):
+        return self.height_scaled
+
     """Setter functions"""
     def set_x(self, val_x):
         self.x = val_x
-        self.x_scaled = self.x * self.scale_in_x
+        self.x_scaled = int(round(self.x * self.scale_in_x))
+
+    def set_x_scaled(self, scale_w):
+        self.x_scaled = int(round(scale_w * self.x))
 
     def set_x_prev(self, val_x):
         self.x_prev = val_x
         self.x_prev_scaled = self.x_prev * self.scale_in_x
 
     def set_y(self, val_y):
-
         self.y = val_y
-        self.y_scaled = self.y * self.scale_in_y
+        self.y_scaled = int(round(self.y * self.scale_in_y))
+
+    def set_y_scaled(self, scale_h):
+        self.y_scaled = int(round(scale_h * self.y))
 
     def set_y_prev(self, val_y):
         self.y_prev = val_y
         self.y_prev_scaled = self.y_prev * self.scale_in_y
 
-    def set_scale(self, scale_w, scale_h):
+    def set_scale_in_x(self, scale_w):
         self.scale_in_x = scale_w
+
+    def set_scale_in_y(self, scale_h):
         self.scale_in_y = scale_h
 
-    def set_scales(self, scale_w, scale_h):
-        self.set_scale(self, scale_w, scale_h)
+    def set_scaled_width(self, scale_w):
+        self.width_scaled = int(round(scale_w * self.width))
+
+    def set_scaled_height(self, scale_h):
+        self.height_scaled = int(round(scale_h * self.height))
 
     def set_collision_x(self, collision_x1):
         self.collision_x1 = collision_x1
@@ -183,8 +205,34 @@ class MyPlayer(InputClass.Inputs):
         self.collision_height = collision_height
         self.collision_height_scaled = collision_height * self.scale_in_y
 
+    def scale_attributes(self, scale_w, scale_h):
+
+        self.set_scale_in_x(scale_w)
+        self.set_scale_in_y(scale_h)
+
+        self.set_scaled_width(scale_w)
+        self.set_scaled_height(scale_h)
+
+        self.set_x(self.x)
+        self.set_collision_x_prev(self.collision_x1_prev)
+
+        self.set_y_scaled(self.y)
+        self.set_collision_y_prev(self.collision_y1_prev)
+
+        self.image_rect_scaled = pygame.Rect(self.x_scaled, self.y_scaled, self.width_scaled, self.height_scaled)
+
+        # '''Collision parameters'''
+        self.set_collision_x(self.collision_x1)
+        self.set_collision_y(self.collision_y1)
+        self.set_collision_width(self.collision_width)
+        self.set_collision_height(self.collision_height)
+
+        self.set_increment_x(self.increment_x)
+        self.set_increment_y(self.increment_y)
+
     def set_init_animation(self, name):
-        self.Anim_scaled = self.Animation_scaled[name]
+        self.current_animation = self.animations[name]
+        self.current_animation_scaled = self.animations_scaled[name]
 
     def set_animation(self, sprite_sheet, frames, name):
 
@@ -215,14 +263,34 @@ class MyPlayer(InputClass.Inputs):
 
         temp = pyganim.getImagesFromSpriteSheet(sprite_sheet, rects=frames)
         temp = list(zip(temp, [100] * len(temp)))
-        self.Animation[name] = pyganim.PygAnimation(temp)
-        self.Animation_scaled[name] = pyganim.PygAnimation(temp)
+        self.animations[name] = pyganim.PygAnimation(temp)
+        self.animations_scaled[name] = pyganim.PygAnimation(temp)
 
-        if not self.Anim_scaled:
-            if self.Animation_scaled["down"]:
-                self.Anim = self.Animation_scaled["down"]
-            else:
-                self.Anim_scaled = self.Animation_scaled[name]
+        if self.animations["down"]:
+            self.current_animation = self.animations["down"]
+            self.current_animation_scaled = self.animations_scaled["down"]
+        else:
+            self.current_animation = self.animations[name]
+            self.current_animation_scaled = self.animations_scaled[name]
+
+    def set_animation_scale(self, scale_w, scale_h):
+
+        if self.width_scaled != 1.0 or self.height_scaled != 1.0:
+
+            self.scale_attributes(scale_w, scale_h)
+
+            for name in self.animations:
+                # See http: // pygame.org / docs / ref / transform.html  # pygame.transform.scale
+                self.animations_scaled[name].clearTransforms()
+                self.animations_scaled[name].scale((self.width_scaled, self.height_scaled))
+
+        else:
+
+            self.scale_attributes(scale_w, scale_h)
+
+            for name in self.animations:
+                # See http: // pygame.org / docs / ref / transform.html  # pygame.transform.scale
+                self.animations_scaled[name].scale((self.width_scaled, self.height_scaled))
 
     def collision_with(self, collision_object):
         """
@@ -276,11 +344,11 @@ class MyPlayer(InputClass.Inputs):
                 self.increment_y *= 0.7071
 
             if key_buffer_list:
-                self.Anim_scaled = self.Animation_scaled[key_buffer_list[-1]]
-                self.Anim_scaled.play()
+                self.current_animation_scaled = self.animations_scaled[key_buffer_list[-1]]
+                self.current_animation_scaled.play()
 
         elif not self.motion:
-            self.Anim_scaled.pause()
+            self.current_animation_scaled.pause()
 
         self.set_x_prev(self.get_x())
         self.set_collision_x_prev(round(self.get_x() - self.x_offset))
@@ -293,10 +361,11 @@ class MyPlayer(InputClass.Inputs):
         self.set_collision_x(round(self.get_x() - self.x_offset))
         self.set_collision_y(round(self.get_y() - self.y_offset))
 
-        self.Anim_scaled.blit(surface, (self.x_scaled, self.y_scaled))
+        self.current_animation_scaled.blit(surface, (self.x_scaled, self.y_scaled))
 
     def play_animation(self, surface, name):
 
-        self.Anim_scaled = self.Animation_scaled[name]
-        self.Anim_scaled.play()
-        self.Anim_scaled.blit(surface, (self.x_scaled, self.y_scaled))
+        self.current_animation_scaled = self.animations_scaled[name]
+
+        self.current_animation_scaled.play()
+        self.current_animation_scaled.blit(surface, (self.x_scaled, self.y_scaled))

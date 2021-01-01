@@ -52,7 +52,7 @@ def tile_map_one():
          materials["grass"], materials["grass"], materials["dirt"], materials["hedge"], materials["grass"],
          materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
          materials["grass"]],
-        [materials["grass"], materials["grass block"], materials["grass"], materials["grass"], materials["grass"],
+        [materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
          materials["grass"], materials["hedge"], materials["dirt"], materials["grass"], materials["grass"],
          materials["grass"], materials["grass"], materials["grass"], materials["grass"], materials["grass"],
          materials["grass"]],

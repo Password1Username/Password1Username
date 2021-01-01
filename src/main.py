@@ -6,8 +6,6 @@ import sys
 import os
 
 import pygame
-from pygame.locals import *
-import math as m
 import AnimationClass
 import tilemap
 
@@ -59,7 +57,8 @@ dy = winy * ratey
 housex = 50
 housey = 50
 
-windowSurface = pygame.display.set_mode((win_x, winy), HWSURFACE | DOUBLEBUF | RESIZABLE, 32)
+windowSurface = pygame.display.set_mode((win_x, winy),
+                pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE, 32)
 pygame.display.set_caption('Witch Hunt')
 
 # create dummy house object
@@ -130,8 +129,8 @@ danny.set_x(tile_width_scaled)
 danny.set_y(3*tile_height_scaled)
 
 
-# """Used to scale objects."""
 def scaled_variable(variable, scale):
+    """Used to scale objects."""
     return scale * variable
 
 
@@ -150,8 +149,8 @@ FPS = 30
 
 
 red = (100, 50, 50)
-grassgreen = (170, 244, 66)
-earthbrown = (230, 115, 0)
+grass_green = (170, 244, 66)
+earth_brown = (230, 115, 0)
 
 
 current_game_map = tilemap.tile_map_one()
@@ -164,7 +163,7 @@ for row in range(0, n_height):
         current_game_map_textures[current_game_map[row][column]].set_y(round(row * tile_height))
 
 while True:
-    windowSurface.fill(grassgreen)
+    windowSurface.fill(grass_green)
     # scale_h=1.0
     # scale_w=1.0
     pygame.event.pump()
@@ -172,7 +171,7 @@ while True:
     current_events = pygame.event.get()
 
     for event in current_events:
-        if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+        if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             pygame.quit()
             sys.exit()
 
@@ -182,7 +181,7 @@ while True:
         if event.type == pygame.VIDEORESIZE:
             # There's some code to add back window content here.
 
-            tempSurface = pygame.display.set_mode((event.w, event.h), HWSURFACE | DOUBLEBUF | RESIZABLE)
+            tempSurface = pygame.display.set_mode((event.w, event.h), pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
             windowSurface.blit(tempSurface, (0, 0))
             windowSurface = tempSurface
             win_x = windowSurface.get_width()
@@ -190,33 +189,28 @@ while True:
             del tempSurface
             scale_w = float(win_x) / small_win_x
             scale_h = float(winy) / small_win_y
-            tile_width_scaled = round(scaled_variable(tile_width, scale_w))
-            tile_height_scaled = round(scaled_variable(tile_height, scale_h))
 
             for row in range(0, n_height):
                 for column in range(0, n_width):
-                    current_game_map_textures[current_game_map[row][column]].set_x(column * tile_width_scaled)
-                    current_game_map_textures[current_game_map[row][column]].set_y(row * tile_height_scaled)
-                    current_game_map_textures[current_game_map[row][column]].scale_values(scale_w, scale_h)
+                    current_game_map_textures[current_game_map[row][column]].scale_attributes(scale_w, scale_h)
 
-            player.set_scales(scale_w, scale_h)
-            danny.set_scales(scale_w, scale_h)
+            player.set_animation_scale(scale_w, scale_h)
+            danny.set_animation_scale(scale_w, scale_h)
+            danny.get_
 
     # '''Tile map collision detection'''
     for row in range(0, n_height):
         for column in range(0, n_width):
 
             current_tile = current_game_map[row][column]
-            current_game_map_textures[current_tile].set_x(round(column * tile_width_scaled))
-            current_game_map_textures[current_tile].set_y(round(row * tile_height_scaled))
-            current_game_map_textures[current_game_map[row][column]].image_rect = (
-                round(column * tile_width_scaled), round(row * tile_height_scaled), m.ceil(tile_width_scaled),
-                m.ceil(tile_height_scaled))
+            current_game_map_textures[current_tile].set_image_rect(
+                column * tile_width_scaled, row * tile_height_scaled, tile_width_scaled,
+                tile_height_scaled)
             windowSurface.blit(current_game_map_textures[current_tile].image_obj, current_game_map_textures[current_tile].image_rect)
 
             if current_tile in tilemap.block_textures:
-                current_game_map_textures[current_tile].set_collision_x(round(column * tile_width_scaled))
-                current_game_map_textures[current_tile].set_collision_y(round(row * tile_height_scaled))
+                current_game_map_textures[current_tile].set_collision_rect(
+                    column * tile_width, row * tile_height, tile_width, tile_height)
                 player.collision_with(current_game_map_textures[current_tile])
 
     danny.play_animation(windowSurface, "down")
