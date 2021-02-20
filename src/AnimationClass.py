@@ -67,7 +67,8 @@ class MyPlayer(InputClass.Inputs):
         self.height_scaled = self.height * self.scale_in_y
 
         self.image_rect = pygame.Rect(self.x, self.y, self.width, self.height)
-        self.image_rect_scaled = pygame.Rect(self.x_scaled, self.y_scaled, self.width_scaled, self.height_scaled)
+        self.image_rect_scaled = pygame.Rect(self.get_x_scaled(), self.get_y_scaled(), self.width_scaled,
+                                             self.height_scaled)
 
         '''Collision parameters'''
         self.collision_x1 = self.x
@@ -95,17 +96,24 @@ class MyPlayer(InputClass.Inputs):
         self.collision_center_y_scaled = self.y_scaled + 0.5 * self.height_scaled
 
     """Getter functions"""
+
     def get_buffer(self):
         return self.buffer
 
     def get_x(self):
         return self.x
 
-    def get_y(self):
-        return self.y
+    def get_x_scaled(self):
+        return self.x_scaled
 
     def get_x_prev(self):
         return self.x_prev
+
+    def get_y(self):
+        return self.y
+
+    def get_y_scaled(self):
+        return self.y_scaled
 
     def get_y_prev(self):
         return self.y_prev
@@ -123,6 +131,7 @@ class MyPlayer(InputClass.Inputs):
         return self.height_scaled
 
     """Setter functions"""
+
     def set_x(self, val_x):
         self.x = val_x
         self.x_scaled = int(round(self.x * self.scale_in_x))
@@ -205,6 +214,12 @@ class MyPlayer(InputClass.Inputs):
         self.collision_height = collision_height
         self.collision_height_scaled = collision_height * self.scale_in_y
 
+    def draw_collision_box(self, surface):
+        pygame.draw.rect(surface, (0, 0, 0), pygame.Rect(self.collision_x1_scaled,
+                                                         self.collision_y1_scaled,
+                                                         self.collision_width_scaled,
+                                                         self.collision_height_scaled,))
+
     def scale_attributes(self, scale_w, scale_h):
 
         self.set_scale_in_x(scale_w)
@@ -219,7 +234,8 @@ class MyPlayer(InputClass.Inputs):
         self.set_y_scaled(self.y)
         self.set_collision_y_prev(self.collision_y1_prev)
 
-        self.image_rect_scaled = pygame.Rect(self.x_scaled, self.y_scaled, self.width_scaled, self.height_scaled)
+        self.image_rect_scaled = pygame.Rect(self.get_x_scaled(), self.get_y_scaled(), self.width_scaled,
+                                             self.height_scaled)
 
         # '''Collision parameters'''
         self.set_collision_x(self.collision_x1)
@@ -316,7 +332,7 @@ class MyPlayer(InputClass.Inputs):
             self.set_collision_y(self.collision_y1_prev)
 
     def arrow_key_animation_motion(self, surface, events):
-        # """ This method is used to map keyboard arrow inputs to the animations and their position """
+        # This method is used to map keyboard arrow inputs to the animations and their position
 
         key_state = super().get_key_state(events)
         key_buffer_list = [buffer_element.input_name for buffer_element in super().get_buffer_list()]
@@ -361,11 +377,11 @@ class MyPlayer(InputClass.Inputs):
         self.set_collision_x(round(self.get_x() - self.x_offset))
         self.set_collision_y(round(self.get_y() - self.y_offset))
 
-        self.current_animation_scaled.blit(surface, (self.x_scaled, self.y_scaled))
+        self.current_animation_scaled.blit(surface, (self.get_x_scaled(), self.get_y_scaled()))
 
     def play_animation(self, surface, name):
 
         self.current_animation_scaled = self.animations_scaled[name]
 
         self.current_animation_scaled.play()
-        self.current_animation_scaled.blit(surface, (self.x_scaled, self.y_scaled))
+        self.current_animation_scaled.blit(surface, (self.get_x_scaled(), self.get_y_scaled()))

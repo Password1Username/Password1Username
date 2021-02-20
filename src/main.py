@@ -6,8 +6,10 @@ import sys
 import os
 
 import pygame
-import AnimationClass
+import surface_configuration
 import tilemap
+import initialize_player
+import initialize_danny
 
 sys.path.append(os.path.abspath('..'))
 os.environ['SDL_VIDEODRIVER'] = 'windlib'
@@ -24,109 +26,15 @@ pygame.init()
 pygame.mixer.music.load('./music/witch-hunt.wav')
 pygame.mixer.music.play(0)
 
-
-'''Tile map dimensions'''
-n_width = 16
-n_height = 16
-
-tile_width = 32
-tile_width_scaled = 32
-tile_height = 32
-tile_height_scaled = 32
-
-# set up the window
-small_win_x = tile_width * n_width
-win_x = small_win_x
-small_win_y = tile_height * n_height
-winy = small_win_y
-
-scale_w = 1.0
-scale_h = 1.0
-
-xpos = 0.5 * win_x
-ypos = 0.5 * winy
-xpos_scaled = xpos
-ypos_scaled = ypos
-
-ratex = 0.01
-ratey = 0.01
-
-dx = win_x * ratex
-dy = winy * ratey
-
 housex = 50
 housey = 50
 
-windowSurface = pygame.display.set_mode((win_x, winy),
-                pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE, 32)
+windowSurface = pygame.display.set_mode((surface_configuration.win_x, surface_configuration.win_y),
+                                        pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE, 32)
 pygame.display.set_caption('Witch Hunt')
 
-# create dummy house object
-
-# First try for using the sprite class
-
-sheet_width = 6 * 64
-sheet_height = 2 * 40
-'''Picture offset'''
-sprite_y = 0
-sprite_x = 0
-sprite_width = 64
-sprite_height = 40
-
-rects_up = [(sprite_x + 3 * sprite_width, sprite_y, sprite_width, sprite_height),
-            (sprite_x + 4 * sprite_width, sprite_y, sprite_width, sprite_height),
-            (sprite_x + 5 * sprite_width, sprite_y, sprite_width, sprite_height)]
-
-rects_down = [(sprite_x, sprite_y, sprite_width, sprite_height),
-              (sprite_x + sprite_width, sprite_y, sprite_width, sprite_height),
-              (sprite_x + 2 * sprite_width, sprite_y, sprite_width, sprite_height)]
-
-rects_left = [(sprite_x, sprite_y + sprite_height, sprite_width, sprite_height),
-              (sprite_x + sprite_width, sprite_y + sprite_height, sprite_width, sprite_height),
-              (sprite_x + 2 * sprite_width, sprite_y + sprite_height, sprite_width, sprite_height)]
-
-rects_right = [(sprite_x + 3 * sprite_width, sprite_y + sprite_height, sprite_width, sprite_height),
-               (sprite_x + 4 * sprite_width, sprite_y + sprite_height, sprite_width, sprite_height),
-               (sprite_x + 5 * sprite_width, sprite_y + sprite_height, sprite_width, sprite_height)]
-
-
-player = AnimationClass.MyPlayer(x_pos=0.0, y_pos=0.0)
-player.set_animation('./pics/blueboy_64_40.png', rects_down, "down")
-player.set_animation('./pics/blueboy_64_40.png', rects_up, "up")
-player.set_animation('./pics/blueboy_64_40.png', rects_left, "left")
-player.set_animation('./pics/blueboy_64_40.png', rects_right, "right")
-player.set_init_animation("down")
-
-player_init_x = 0.0
-player_init_y = 0.0
-
-hit_box_length = 28
-
-col_init_x1 = 18
-col_init_y1 = 5
-
-player.set_x(player_init_x)
-player.set_y(player_init_y)
-
-player.set_hit_box_x(col_init_x1)
-player.set_hit_box_y(col_init_y1)
-player.set_collision_width(hit_box_length)
-player.set_collision_height(hit_box_length)
-
-player.set_dx(dx)
-player.set_dy(dy)
-
-danny = AnimationClass.MyPlayer(x_pos=0, y_pos=0)
-
-rects_down_danny = [(sprite_x, sprite_y, sprite_width, sprite_height),
-                    (sprite_x + sprite_width, sprite_y, sprite_width, sprite_height),
-                    (sprite_x + 2 * sprite_width, sprite_y, sprite_width, sprite_height),
-                    (sprite_x + 3 * sprite_width, sprite_y, sprite_width, sprite_height)]
-
-danny.set_animation('./pics/people/danny_64_40.png', rects_down_danny, "down")
-danny.set_init_animation("down")
-danny.set_x(tile_width_scaled)
-danny.set_y(3*tile_height_scaled)
+player = initialize_player.player
+danny = initialize_danny.danny
 
 
 def scaled_variable(variable, scale):
@@ -152,15 +60,13 @@ red = (100, 50, 50)
 grass_green = (170, 244, 66)
 earth_brown = (230, 115, 0)
 
-
 current_game_map = tilemap.tile_map_one()
 current_game_map_textures = tilemap.textures
 
-
-for row in range(0, n_height):
-    for column in range(0, n_width):
-        current_game_map_textures[current_game_map[row][column]].set_x(round(column * tile_width))
-        current_game_map_textures[current_game_map[row][column]].set_y(round(row * tile_height))
+for row in range(0, surface_configuration.n_height):
+    for column in range(0, surface_configuration.n_width):
+        current_game_map_textures[current_game_map[row][column]].set_x(round(column * surface_configuration.tile_width))
+        current_game_map_textures[current_game_map[row][column]].set_y(round(row * surface_configuration.tile_height))
 
 while True:
     windowSurface.fill(grass_green)
@@ -181,37 +87,46 @@ while True:
         if event.type == pygame.VIDEORESIZE:
             # There's some code to add back window content here.
 
-            tempSurface = pygame.display.set_mode((event.w, event.h), pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
+            tempSurface = pygame.display.set_mode((event.w, event.h),
+                                                  pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
             windowSurface.blit(tempSurface, (0, 0))
             windowSurface = tempSurface
-            win_x = windowSurface.get_width()
-            winy = windowSurface.get_height()
+            surface_configuration.win_x = windowSurface.get_width()
+            surface_configuration.win_y = windowSurface.get_height()
             del tempSurface
-            scale_w = float(win_x) / small_win_x
-            scale_h = float(winy) / small_win_y
+            surface_configuration.scale_w = float(surface_configuration.win_x) / surface_configuration.small_win_x
+            surface_configuration.scale_h = float(surface_configuration.win_y) / surface_configuration.small_win_y
 
-            for row in range(0, n_height):
-                for column in range(0, n_width):
-                    current_game_map_textures[current_game_map[row][column]].scale_attributes(scale_w, scale_h)
+            for row in range(0, surface_configuration.n_height):
+                for column in range(0, surface_configuration.n_width):
+                    current_game_map_textures[current_game_map[row][column]]. \
+                        scale_attributes(surface_configuration.scale_w,
+                                         surface_configuration.scale_h)
 
-            player.set_animation_scale(scale_w, scale_h)
-            danny.set_animation_scale(scale_w, scale_h)
-            danny.get_
+            player.set_animation_scale(surface_configuration.scale_w, surface_configuration.scale_h)
+            danny.set_animation_scale(surface_configuration.scale_w, surface_configuration.scale_h)
 
-    # '''Tile map collision detection'''
-    for row in range(0, n_height):
-        for column in range(0, n_width):
+    # Tile map collision detection
+    for row in range(0, surface_configuration.n_height):
+        for column in range(0, surface_configuration.n_width):
 
             current_tile = current_game_map[row][column]
             current_game_map_textures[current_tile].set_image_rect(
-                column * tile_width_scaled, row * tile_height_scaled, tile_width_scaled,
-                tile_height_scaled)
-            windowSurface.blit(current_game_map_textures[current_tile].image_obj, current_game_map_textures[current_tile].image_rect)
+                column * surface_configuration.tile_width_scaled,
+                row * surface_configuration.tile_height_scaled, surface_configuration.tile_width_scaled,
+                surface_configuration.tile_height_scaled)
+            windowSurface.blit(current_game_map_textures[current_tile].image_obj,
+                               current_game_map_textures[current_tile].image_rect)
 
             if current_tile in tilemap.block_textures:
                 current_game_map_textures[current_tile].set_collision_rect(
-                    column * tile_width, row * tile_height, tile_width, tile_height)
+                    column * surface_configuration.tile_width,
+                    row * surface_configuration.tile_height, surface_configuration.tile_width,
+                    surface_configuration.tile_height)
+
                 player.collision_with(current_game_map_textures[current_tile])
+
+    player.collision_with(danny)
 
     danny.play_animation(windowSurface, "down")
     player.arrow_key_animation_motion(windowSurface, current_events)
