@@ -160,6 +160,7 @@ class MyPlayer(InputClass.Inputs):
     def set_scale_in_y(self, scale_h):
         self.scale_in_y = scale_h
 
+
     def set_scaled_width(self, scale_w):
         self.width_scaled = int(round(scale_w * self.width))
 
@@ -218,7 +219,7 @@ class MyPlayer(InputClass.Inputs):
         pygame.draw.rect(surface, (0, 0, 0), pygame.Rect(self.collision_x1_scaled,
                                                          self.collision_y1_scaled,
                                                          self.collision_width_scaled,
-                                                         self.collision_height_scaled,))
+                                                         self.collision_height_scaled, ))
 
     def scale_attributes(self, scale_w, scale_h):
 
@@ -231,7 +232,7 @@ class MyPlayer(InputClass.Inputs):
         self.set_x(self.x)
         self.set_collision_x_prev(self.collision_x1_prev)
 
-        self.set_y_scaled(self.y)
+        self.set_y(self.y)
         self.set_collision_y_prev(self.collision_y1_prev)
 
         self.image_rect_scaled = pygame.Rect(self.get_x_scaled(), self.get_y_scaled(), self.width_scaled,

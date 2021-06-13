@@ -17,7 +17,7 @@ os.environ['SDL_VIDEODRIVER'] = 'windlib'
 
 # Set up: https://docs.w3cub.com/pygame/ref/mixer/
 # https://xszz.org/faq-1/question-2018090534515.html
-pygame.mixer.init(44100, -16, 2, 2048)
+# pygame.mixer.init(44100, -16, 2, 2048)
 pygame.init()
 
 # '''Music'''
@@ -129,6 +129,8 @@ while True:
     player.collision_with(danny)
 
     danny.play_animation(windowSurface, "down")
+    # print(danny.get_x_scaled(), danny.get_y_scaled())
+
     player.arrow_key_animation_motion(windowSurface, current_events)
     pygame.display.update()
 
